@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.surfing.inthe.wavepark.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.runtime.LaunchedEffect
-import com.surfing.inthe.wavepark.MainActivity
 import kotlinx.coroutines.delay
 
 /**
@@ -44,7 +44,7 @@ class SplashActivity : ComponentActivity() {
                     .background(Color(0xFF0099CC)), // 바다/서핑 테마 컬러
                 contentAlignment = Alignment.Center
             ) {
-                // 중앙 이미지 (surf.png는 drawable에 추가 필요)
+                // 중앙 이미지 (임시: 시스템 내장 아이콘 사용)
                 Image(
                     painter = painterResource(id = android.R.drawable.ic_menu_compass),
                     contentDescription = "서핑 일러스트",
@@ -53,4 +53,4 @@ class SplashActivity : ComponentActivity() {
             }
         }
     }
-}
+} 

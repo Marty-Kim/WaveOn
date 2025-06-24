@@ -1,10 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- WavePark 서핑 테마 색상 -->
+    <color name="ocean_blue">#1E3A8A</color>
+    <color name="ocean_blue_light">#3B82F6</color>
+    <color name="ocean_blue_dark">#1E40AF</color>
+    <color name="wave_blue">#0EA5E9</color>
+    <color name="wave_blue_light">#38BDF8</color>
+    <color name="sand_cream">#FEF3C7</color>
+    <color name="sand_cream_dark">#F59E0B</color>
+    <color name="coral_orange">#FB7185</color>
+    <color name="coral_orange_light">#FDA4AF</color>
+    
+    <!-- 기본 색상 -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray_light">#F8FAFC</color>
+    <color name="gray_medium">#64748B</color>
+    <color name="gray_dark">#334155</color>
+    
+    <!-- 텍스트 색상 -->
+    <color name="text_primary">#1E293B</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_tertiary">#94A3B8</color>
+    <color name="text_on_primary">#FFFFFF</color>
+    <color name="text_on_secondary">#FFFFFF</color>
+    
+    <!-- 배경 색상 -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F8FAFC</color>
+    <color name="background_surface">#FFFFFF</color>
+    
+    <!-- 호환성을 위한 기존 색상 유지 -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    
+    <!-- 세션별 카드 테두리용 light tone 색상 -->
+    <color name="session_blue">#2196F3</color>      <!-- 초급 -->
+    <color name="session_yellow">#FFD600</color>    <!-- 중급 -->
+    <color name="session_red">#FF5252</color>       <!-- 상급 -->
 </resources>

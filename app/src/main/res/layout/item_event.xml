@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/wave_blue"
+    app:strokeWidth="1dp"
+    android:layout_margin="8dp"
+    android:backgroundTint="@color/background_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 배너 이미지 -->
+        <ImageView
+            android:id="@+id/img_event_banner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="16"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:contentDescription="이벤트 배너"
+            android:background="@color/gray_light"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp" />
+
+        <!-- 제목/날짜 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/text_event_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="이벤트 제목"
+                android:textAppearance="@style/TextAppearance.WavePark.Body1"
+                android:textColor="@color/ocean_blue"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/text_event_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2024.06.01 ~ 2024.06.30"
+                android:textAppearance="@style/TextAppearance.WavePark.Caption"
+                android:textColor="@color/text_secondary"
+                android:gravity="end"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView> 

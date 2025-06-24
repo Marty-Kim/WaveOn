@@ -4,35 +4,51 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.surfing.inthe.wavepark.databinding.FragmentHomeBinding
+import com.surfing.inthe.wavepark.R
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Home 화면의 Fragment (MVVM)
+ * ViewModel을 Hilt로 주입받아 LiveData를 관찰, UI를 업데이트.
+ */
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    // Hilt로 ViewModel 주입 (by viewModels())
+    private val homeViewModel: HomeViewModel by viewModels()
+    private lateinit var eventAdapter: EventAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        setupEventRecyclerView()
+        observeViewModel()
+        return binding.root
+    }
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    // RecyclerView 초기화
+    private fun setupEventRecyclerView() {
+        eventAdapter = EventAdapter()
+        binding.recyclerViewEvents.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = eventAdapter
         }
-        return root
+    }
+
+    // ViewModel의 LiveData를 관찰하여 UI 업데이트
+    private fun observeViewModel() {
+        homeViewModel.events.observe(viewLifecycleOwner) { events ->
+            eventAdapter.submitList(events)
+        }
     }
 
     override fun onDestroyView() {

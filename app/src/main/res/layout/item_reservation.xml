@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true"
+    app:strokeColor="@color/session_blue"
+    app:strokeWidth="2dp"
+    android:layout_marginVertical="4dp"
+    android:layout_marginHorizontal="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:gravity="center_vertical"
+        android:background="@color/background_surface">
+
+        <!-- 시간 -->
+        <TextView
+            android:id="@+id/text_time_range"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:00~11:00"
+            android:textAppearance="@style/TextAppearance.WavePark.Body1"
+            android:textColor="@color/ocean_blue"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginEnd="12dp" />
+
+        <!-- 세션명 -->
+        <TextView
+            android:id="@+id/text_session"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초급"
+            android:textAppearance="@style/TextAppearance.WavePark.Body1"
+            android:textColor="@color/wave_blue"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginEnd="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:gravity="end"
+            >
+            <!-- 좌코브 -->
+            <TextView
+                android:id="@+id/text_left_cove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="좌"
+                android:textAppearance="@style/TextAppearance.WavePark.Body2"
+                android:textColor="@color/text_secondary"
+                android:layout_marginEnd="2dp" />
+            <TextView
+                android:id="@+id/text_left_seat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:textAppearance="@style/TextAppearance.WavePark.Body2"
+                android:textColor="@color/wave_blue"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginEnd="12dp" />
+
+            <!-- 우코브 -->
+            <TextView
+                android:id="@+id/text_right_cove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="우"
+                android:textAppearance="@style/TextAppearance.WavePark.Body2"
+                android:textColor="@color/text_secondary"
+                android:layout_marginEnd="2dp" />
+            <TextView
+                android:id="@+id/text_right_seat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textAppearance="@style/TextAppearance.WavePark.Body2"
+                android:textColor="@color/coral_orange"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView> 
