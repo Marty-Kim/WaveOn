@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/wave_blue"
+    app:strokeWidth="2dp"
+    android:layout_marginBottom="12dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:backgroundTint="@color/background_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="space_between|center_vertical">
+            <TextView
+                android:id="@+id/text_carpool_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="왕복"
+                android:textColor="@color/ocean_blue"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/text_carpool_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="출발 08:00 / 복귀 18:00"
+                android:textColor="@color/gray_medium"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_carpool_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="서울 → 웨이브파크"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:layout_marginTop="4dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            <TextView
+                android:id="@+id/text_carpool_people"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="탑승 3명"
+                android:textColor="@color/wave_blue"
+                android:textSize="14sp"
+                android:layout_marginEnd="12dp"/>
+            <TextView
+                android:id="@+id/text_carpool_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="보드 캐리 가능"
+                android:textColor="@color/mint"
+                android:textSize="14sp"
+                android:layout_marginEnd="12dp"/>
+            <TextView
+                android:id="@+id/text_carpool_cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비용 10,000원"
+                android:textColor="@color/coral_orange"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView> 

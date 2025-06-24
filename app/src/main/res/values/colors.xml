@@ -41,4 +41,5 @@
     <color name="session_blue">#2196F3</color>      <!-- 초급 -->
     <color name="session_yellow">#FFD600</color>    <!-- 중급 -->
     <color name="session_red">#FF5252</color>       <!-- 상급 -->
+    <color name="mint">#A7FFEB</color>
 </resources>

@@ -22,4 +22,10 @@
         android:name="com.surfing.inthe.wavepark.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_carpool_list"
+        android:name="com.surfing.inthe.wavepark.ui.carpool.CarpoolListFragment"
+        android:label="카풀 리스트"
+        tools:layout="@layout/fragment_carpool_list" />
 </navigation>
