@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.WavePark" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.WavePark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/ocean_blue</item>
         <item name="colorPrimaryVariant">@color/ocean_blue_dark</item>
@@ -102,14 +102,14 @@
         <item name="android:textSize">12sp</item>
     </style>
     
-    <!-- DatePicker 다이얼로그 스타일 -->
-    <style name="WaveParkDatePickerDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="colorPrimary">@color/ocean_blue</item>
-        <item name="colorPrimaryVariant">@color/ocean_blue_dark</item>
-        <item name="colorSecondary">@color/wave_blue</item>
-        <item name="colorSurface">@color/background_surface</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-        <item name="android:colorBackground">@color/background_primary</item>
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
+<!--    &lt;!&ndash; DatePicker 다이얼로그 스타일 &ndash;&gt;-->
+<!--    <style name="WaveParkDatePickerDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">-->
+<!--        <item name="colorPrimary">@color/ocean_blue</item>-->
+<!--        <item name="colorPrimaryVariant">@color/ocean_blue_dark</item>-->
+<!--        <item name="colorSecondary">@color/wave_blue</item>-->
+<!--        <item name="colorSurface">@color/background_surface</item>-->
+<!--        <item name="colorOnSurface">@color/text_primary</item>-->
+<!--        <item name="android:colorBackground">@color/background_primary</item>-->
+<!--        <item name="android:fontFamily">sans-serif</item>-->
+<!--    </style>-->
 </resources>

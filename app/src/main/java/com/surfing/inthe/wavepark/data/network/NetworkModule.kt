@@ -1,6 +1,5 @@
 package com.surfing.inthe.wavepark.data.network
 
-import com.surfing.inthe.wavepark.data.api.ReservationApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -28,5 +27,4 @@ object NetworkModule {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     
-    val reservationApiService: ReservationApiService = retrofit.create(ReservationApiService::class.java)
-} 
+}

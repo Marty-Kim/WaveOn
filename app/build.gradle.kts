@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     kotlin("kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.surfing.inthe.wavepark"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -86,8 +87,12 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-rxjava2")
 
     // Hilt DI
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    ksp("com.google.dagger:hilt-android-compiler:2.56.2")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }

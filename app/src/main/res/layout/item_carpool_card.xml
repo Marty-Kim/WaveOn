@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="space_between|center_vertical">
+            android:gravity="center_vertical">
             <TextView
                 android:id="@+id/text_carpool_type"
                 android:layout_width="wrap_content"
@@ -32,6 +32,11 @@
                 android:textColor="@color/ocean_blue"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
             <TextView
                 android:id="@+id/text_carpool_time"
                 android:layout_width="wrap_content"
@@ -68,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="보드 캐리 가능"
-                android:textColor="@color/mint"
+                android:textColor="@color/teal_700"
                 android:textSize="14sp"
                 android:layout_marginEnd="12dp"/>
             <TextView
@@ -76,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="비용 10,000원"
-                android:textColor="@color/coral_orange"
+                android:textColor="@color/black"
                 android:textSize="14sp"/>
         </LinearLayout>
     </LinearLayout>

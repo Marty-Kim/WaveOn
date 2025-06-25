@@ -19,9 +19,9 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.surfing.inthe.wavepark.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:name="com.surfing.inthe.wavepark.ui.notifications.WebViewFragment"
+        android:label="@string/title_webview"
+        tools:layout="@layout/fragment_webview" />
 
     <fragment
         android:id="@+id/navigation_carpool_list"

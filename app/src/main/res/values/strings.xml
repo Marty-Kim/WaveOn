@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">WavePark</string>
+    <string name="app_name">웨이브온</string>
+    <string name="app_name_en">WaveOn</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_webview">Web</string>
     
     <!-- Dashboard -->
     <string name="dashboard_title">서핑 예약 현황</string>

@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.surfing.inthe.wavepark.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.runtime.LaunchedEffect
+import com.surfing.inthe.wavepark.MainActivity
 import kotlinx.coroutines.delay
 
 /**

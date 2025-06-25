@@ -30,7 +30,7 @@ class DashboardFragment : Fragment() {
     // Hilt로 ViewModel 주입 (by viewModels())
     private val dashboardViewModel: DashboardViewModel by viewModels()
 
-    private lateinit var reservationAdapter: ReservationAdapter
+    private lateinit var dailySessionAdapter: DailySessionAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,26 +48,32 @@ class DashboardFragment : Fragment() {
         binding.btnDatePicker.setOnClickListener {
             showDatePicker()
         }
-        // 예약 리스트
-        reservationAdapter = ReservationAdapter()
+        binding.btnRefresh.setOnClickListener {
+            dashboardViewModel.refreshSessions()
+        }
+        // 세션 리스트
+        dailySessionAdapter = DailySessionAdapter()
         binding.recyclerViewReservations.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = reservationAdapter
+            adapter = dailySessionAdapter
         }
     }
 
     // ViewModel의 LiveData를 관찰하여 UI 업데이트
     private fun observeViewModel() {
-        dashboardViewModel.reservationData.observe(viewLifecycleOwner) { reservations ->
-            reservationAdapter.submitList(reservations)
-            updateReservationCount(reservations.size)
+        dashboardViewModel.selectedSessionPairs.observe(viewLifecycleOwner) { pairs ->
+            dailySessionAdapter.submitList(pairs)
         }
         dashboardViewModel.selectedDate.observe(viewLifecycleOwner) { date ->
             binding.textSelectedDate.text = formatDisplayDate(date)
         }
+        dashboardViewModel.lastRefreshTime.observe(viewLifecycleOwner) { time ->
+            binding.textLastRefreshTime.text = "마지막 갱신: $time"
+        }
         dashboardViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.btnDatePicker.isEnabled = !isLoading
+            binding.btnRefresh.isEnabled = !isLoading
         }
         dashboardViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (error.isNotEmpty()) {
@@ -86,7 +92,7 @@ class DashboardFragment : Fragment() {
         }
         val datePickerDialog = DatePickerDialog(
             requireContext(),
-            R.style.WaveParkDatePickerDialog,
+//            R.style.WaveParkDatePickerDialog,
             { _, year, month, dayOfMonth ->
                 val selectedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
                 dashboardViewModel.setSelectedDate(selectedDate)
@@ -96,6 +102,7 @@ class DashboardFragment : Fragment() {
             calendar.get(Calendar.DAY_OF_MONTH)
         )
         datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+        datePickerDialog.datePicker.maxDate = System.currentTimeMillis() + 13 * 24 * 60 * 60 * 1000
         datePickerDialog.show()
     }
 
@@ -108,10 +115,6 @@ class DashboardFragment : Fragment() {
         } catch (e: Exception) {
             dateStr
         }
-    }
-
-    private fun updateReservationCount(count: Int) {
-        binding.textReservationCount.text = getString(R.string.total_sessions, count)
     }
 
     override fun onDestroyView() {

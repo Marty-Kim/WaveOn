@@ -40,6 +40,16 @@
             android:tint="@color/ocean_blue"
             android:padding="8dp" />
 
+        <ImageButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="새로고침"
+            android:tint="@color/ocean_blue"
+            android:padding="8dp" />
+
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="24dp"
@@ -49,11 +59,11 @@
             android:indeterminateTint="@color/wave_blue" />
 
         <TextView
-            android:id="@+id/text_reservation_count"
+            android:id="@+id/text_last_refresh_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/total_sessions"
+            android:text="마지막 갱신: --:--:--"
             android:textAppearance="@style/TextAppearance.WavePark.Body2"
             android:textColor="@color/text_secondary" />
     </LinearLayout>

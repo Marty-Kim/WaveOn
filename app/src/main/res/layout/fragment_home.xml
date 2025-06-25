@@ -57,6 +57,8 @@
                 android:padding="20dp">
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="오늘의 세션"
                     android:textAppearance="@style/TextAppearance.WavePark.Headline2"
                     android:textColor="@color/ocean_blue_dark"
@@ -138,7 +140,6 @@
                     android:id="@+id/img_weather_icon"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_weather_sunny"
                     android:contentDescription="날씨 아이콘"
                     android:tint="@color/ocean_blue_dark" />
 
@@ -231,7 +232,6 @@
                     android:id="@+id/btn_instagram"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_instagram"
                     app:tint="@color/white"
                     app:backgroundTint="@color/ocean_blue"
                     android:contentDescription="인스타그램 이동" />

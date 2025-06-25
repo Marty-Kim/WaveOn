@@ -1,0 +1,98 @@
+package com.surfing.inthe.wavepark.ui.dashboard
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
+import com.surfing.inthe.wavepark.R
+import com.surfing.inthe.wavepark.databinding.ItemReservationBinding
+
+class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>() {
+    private var items: List<DashboardViewModel.DailySessionPair> = emptyList()
+
+    fun submitList(list: List<DashboardViewModel.DailySessionPair>) {
+        items = list
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemReservationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        // 두 번째 바인딩(아래쪽)도 생성
+        val binding2 = ItemReservationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding, binding2)
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
+
+    class ViewHolder(
+        private val binding: ItemReservationBinding,
+        private val binding2: ItemReservationBinding
+    ) : RecyclerView.ViewHolder(
+        // 두 개의 바인딩을 하나의 LinearLayout에 합쳐서 root로 사용
+        LinearLayout(binding.root.context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(binding.root)
+            addView(binding2.root)
+        }
+    ) {
+        fun bind(pair: DashboardViewModel.DailySessionPair) {
+            // lesson 세션 바인딩 (위)
+            if (pair.lesson != null) {
+                bindSession(binding, pair.lesson, isLesson = true)
+                binding.root.visibility = View.VISIBLE
+            } else {
+                binding.root.visibility = View.GONE
+            }
+            // normal 세션 바인딩 (아래)
+            if (pair.normal != null) {
+                bindSession(binding2, pair.normal, isLesson = false)
+                binding2.root.visibility = View.VISIBLE
+            } else {
+                binding2.root.visibility = View.GONE
+            }
+        }
+
+        private fun bindSession(binding: ItemReservationBinding, session: DailySession, isLesson: Boolean) {
+            val cardView = binding.cardContainer as? MaterialCardView
+            val context = binding.root.context
+            val startTime = session.time.takeLast(8).substring(0, 5)
+            val endTime = try {
+                val hour = startTime.substring(0, 2).toInt()
+                val nextHour = (hour + 1) % 24
+                String.format("%02d:%s", nextHour, startTime.substring(3, 5))
+            } catch (e: Exception) {
+                "--:--"
+            }
+            binding.textTimeRange.text = "$startTime~$endTime"
+            binding.textSession.text = "${session.name} (${session.waves})"
+            if (isLesson) {
+                binding.textLeftCove.text = "좌"
+                binding.textLeftSeat.text = session.left.toString()
+                binding.textRightCove.text = "우"
+                binding.textRightSeat.text = "-"
+                cardView?.strokeColor = ContextCompat.getColor(context, R.color.session_blue)
+            } else {
+                binding.textLeftCove.text = "좌"
+                binding.textLeftSeat.text = session.left.toString()
+                binding.textRightCove.text = "우"
+                binding.textRightSeat.text = session.right.toString()
+                val strokeColor = when (session.name) {
+                    "초급" -> ContextCompat.getColor(context, R.color.session_blue)
+                    "중급" -> ContextCompat.getColor(context, R.color.session_yellow)
+                    "상급" -> ContextCompat.getColor(context, R.color.session_red)
+                    else -> ContextCompat.getColor(context, R.color.gray_light)
+                }
+                cardView?.strokeColor = strokeColor
+            }
+            cardView?.setCardBackgroundColor(ContextCompat.getColor(context, R.color.background_surface))
+            cardView?.strokeWidth = 4
+        }
+    }
+} 
