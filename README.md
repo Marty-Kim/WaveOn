@@ -47,15 +47,6 @@ WaveOn/
 
 ---
 
-## 🚀 빌드 & 실행 방법
-
-1. **Firebase 연동**: `google-services.json` 파일을 `app/` 폴더에 위치시킵니다.
-2. **SHA-1 등록**: Firebase 콘솔에 앱의 SHA-1, SHA-256을 등록하세요.
-3. **의존성 설치**: Android Studio에서 `Sync Project with Gradle Files` 실행
-4. **실행**: Google Play 지원 에뮬레이터 또는 실기기에서 빌드 & 실행
-
----
-
 ## 🤝 기여 및 개발자 스토리
 
 > 7년간 MVC만 고집하며, private repo만 써서 잔디가 휑했던 개발자입니다. 
