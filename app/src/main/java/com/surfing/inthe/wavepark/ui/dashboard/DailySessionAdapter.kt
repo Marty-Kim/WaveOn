@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.app.ActionBar.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -35,11 +36,20 @@ class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>
         private val binding: ItemReservationBinding,
         private val binding2: ItemReservationBinding
     ) : RecyclerView.ViewHolder(
-        // 두 개의 바인딩을 하나의 LinearLayout에 합쳐서 root로 사용
         LinearLayout(binding.root.context).apply {
             orientation = LinearLayout.VERTICAL
-            addView(binding.root)
-            addView(binding2.root)
+            layoutParams = RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT
+            )
+            addView(binding.root, LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ))
+            addView(binding2.root, LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ))
         }
     ) {
         fun bind(pair: DashboardViewModel.DailySessionPair) {

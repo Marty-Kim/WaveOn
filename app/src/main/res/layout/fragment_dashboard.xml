@@ -81,4 +81,40 @@
         android:overScrollMode="never"
         android:scrollbars="vertical" />
 
+    <!-- 세션 없음 안내 UI -->
+    <LinearLayout
+        android:id="@+id/layout_empty_session"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/img_empty_session"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/session_badge_background"
+            android:tint="@color/text_tertiary"
+            android:contentDescription="세션 없음" />
+
+        <TextView
+            android:id="@+id/text_empty_session"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="남아있는 세션이 없어요!"
+            android:textAppearance="@style/TextAppearance.WavePark.Body1"
+            android:textColor="@color/text_secondary"
+            android:paddingTop="12dp" />
+
+        <Button
+            android:id="@+id/btn_next_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="다음 날짜 보기"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
 </LinearLayout>

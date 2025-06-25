@@ -16,6 +16,8 @@ import com.surfing.inthe.wavepark.databinding.FragmentDashboardBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import android.widget.ImageView
+import android.widget.Button
 
 /**
  * Dashboard 화면의 Fragment (MVVM)
@@ -31,6 +33,8 @@ class DashboardFragment : Fragment() {
     private val dashboardViewModel: DashboardViewModel by viewModels()
 
     private lateinit var dailySessionAdapter: DailySessionAdapter
+    private lateinit var emptySessionLayout: View
+    private lateinit var btnNextDate: Button
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +45,15 @@ class DashboardFragment : Fragment() {
         setupViews()
         observeViewModel()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        emptySessionLayout = binding.layoutEmptySession
+        btnNextDate = binding.btnNextDate
+        btnNextDate.setOnClickListener {
+            moveToNextDate()
+        }
     }
 
     private fun setupViews() {
@@ -63,6 +76,13 @@ class DashboardFragment : Fragment() {
     private fun observeViewModel() {
         dashboardViewModel.selectedSessionPairs.observe(viewLifecycleOwner) { pairs ->
             dailySessionAdapter.submitList(pairs)
+            if (pairs.isNullOrEmpty()) {
+                binding.recyclerViewReservations.visibility = View.GONE
+                emptySessionLayout.visibility = View.VISIBLE
+            } else {
+                binding.recyclerViewReservations.visibility = View.VISIBLE
+                emptySessionLayout.visibility = View.GONE
+            }
         }
         dashboardViewModel.selectedDate.observe(viewLifecycleOwner) { date ->
             binding.textSelectedDate.text = formatDisplayDate(date)
@@ -115,6 +135,16 @@ class DashboardFragment : Fragment() {
         } catch (e: Exception) {
             dateStr
         }
+    }
+
+    private fun moveToNextDate() {
+        val currentDate = dashboardViewModel.selectedDate.value ?: return
+        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+        val date = sdf.parse(currentDate) ?: return
+        val cal = java.util.Calendar.getInstance().apply { time = date }
+        cal.add(java.util.Calendar.DATE, 1)
+        val nextDate = sdf.format(cal.time)
+        dashboardViewModel.setSelectedDate(nextDate)
     }
 
     override fun onDestroyView() {
