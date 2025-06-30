@@ -47,6 +47,9 @@ class HomeFragment : Fragment() {
     // ViewModel의 LiveData를 관찰하여 UI 업데이트
     private fun observeViewModel() {
         homeViewModel.events.observe(viewLifecycleOwner) { events ->
+            events.forEach {
+                println("events ${it.title}" )
+            }
             eventAdapter.submitList(events)
         }
         // 날씨 정보 관찰 및 UI 반영

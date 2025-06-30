@@ -5,15 +5,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.surfing.inthe.wavepark.databinding.ItemEventBinding
 import javax.inject.Inject
-
 // 데이터 모델
 data class EventItem(
-    val imageResId: Int? = null, // drawable 리소스 ID (nullable)
+    val event_url: String? = null, // drawable 리소스 ID (nullable)
+    val date: String? = null, // drawable 리소스 ID (nullable)
     val imageUrl: String? = null, // Firestore 이미지 URL
+    val crawled_at: String? = null, // Firestore 이미지 URL
+    val d_day: Int? = null, // Firestore 이미지 URL
+    val event_id: String? = null, // Firestore 이미지 URL
+    val event_type: String? = null, // Firestore 이미지 URL
     val title: String,
-    val date: String
 )
 
 class EventAdapter : ListAdapter<EventItem, EventAdapter.EventViewHolder>(EventDiffCallback()) {
@@ -26,9 +30,15 @@ class EventAdapter : ListAdapter<EventItem, EventAdapter.EventViewHolder>(EventD
     }
     class EventViewHolder(private val binding: ItemEventBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: EventItem) {
-            binding.imgEventBanner.setImageResource(item.imageResId ?: 0)
+            Glide.with(binding.root.context).load(item.imageUrl).into(binding.imgEventBanner);
             binding.textEventTitle.text = item.title
             binding.textEventDate.text = item.date
+            binding.root.setOnClickListener {
+                item.event_url.let {
+                    val url = it
+
+                }
+            }
         }
     }
     class EventDiffCallback : DiffUtil.ItemCallback<EventItem>() {

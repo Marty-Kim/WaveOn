@@ -33,6 +33,7 @@ class HomeViewModel @Inject constructor(
         // Firestore에서 이벤트 목록 가져오기
         // 실제 날씨 정보 fetch
         viewModelScope.launch {
+            println("Home ViewModel Scope launched")
             _events.value = eventRepository.getEventsFromFirestore()
 //            fetchWeatherInfo()
         }
