@@ -49,6 +49,12 @@ class HomeFragment : Fragment() {
         homeViewModel.events.observe(viewLifecycleOwner) { events ->
             eventAdapter.submitList(events)
         }
+        // 날씨 정보 관찰 및 UI 반영
+        homeViewModel.weatherInfo.observe(viewLifecycleOwner) { info ->
+            binding.imgWeatherIcon.setImageResource(info.iconRes)
+            binding.textWeatherDesc.text = info.desc
+            binding.textWeatherLocation.text = info.location
+        }
     }
 
     override fun onDestroyView() {

@@ -99,6 +99,7 @@ class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>
                     "상급" -> ContextCompat.getColor(context, R.color.session_red)
                     else -> ContextCompat.getColor(context, R.color.gray_light)
                 }
+                cardView?.setCardBackgroundColor(strokeColor)
                 cardView?.strokeColor = strokeColor
             }
             cardView?.setCardBackgroundColor(ContextCompat.getColor(context, R.color.background_surface))

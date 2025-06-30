@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- WavePark 서핑 테마 색상 -->
-    <color name="ocean_blue">#1E3A8A</color>
+    <color name="ocean_blue">#033E8C</color>
     <color name="ocean_blue_light">#3B82F6</color>
     <color name="ocean_blue_dark">#1E40AF</color>
-    <color name="wave_blue">#0EA5E9</color>
+    <color name="wave_blue">#05C7F2</color>
     <color name="wave_blue_light">#38BDF8</color>
     <color name="sand_cream">#FEF3C7</color>
     <color name="sand_cream_dark">#F59E0B</color>
@@ -26,9 +26,9 @@
     <color name="text_on_secondary">#FFFFFF</color>
     
     <!-- 배경 색상 -->
-    <color name="background_primary">#FFFFFF</color>
+    <color name="background_primary">#F2F2F2</color>
     <color name="background_secondary">#F8FAFC</color>
-    <color name="background_surface">#FFFFFF</color>
+    <color name="background_surface">#F2F2F2</color>
     
     <!-- 호환성을 위한 기존 색상 유지 -->
     <color name="purple_200">#FFBB86FC</color>
@@ -38,8 +38,8 @@
     <color name="teal_700">#FF018786</color>
     
     <!-- 세션별 카드 테두리용 light tone 색상 -->
-    <color name="session_blue">#2196F3</color>      <!-- 초급 -->
-    <color name="session_yellow">#FFD600</color>    <!-- 중급 -->
-    <color name="session_red">#FF5252</color>       <!-- 상급 -->
+    <color name="session_blue">#05C7F2</color>      <!-- 초급 -->
+    <color name="session_yellow">#F2B705</color>    <!-- 중급 -->
+    <color name="session_red">#D90404</color>       <!-- 상급 -->
     <color name="mint">#A7FFEB</color>
 </resources>
