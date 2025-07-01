@@ -1,13 +1,18 @@
 package com.surfing.inthe.wavepark
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.encoders.annotations.Encodable
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,13 +39,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // 서버에 토큰을 전송하는 로직 추가 가능
     }
 
+    @SuppressLint("MissingPermission")
     private fun sendNotification(title: String?, message: String?) {
-        val channelId = "wavepark_fcm_channel"
+        val channelId = "waveon_fcm_channel"
         val notificationId = getNextNotificationId()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "WavePark 알림",
+                "WaveOn 알림",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -56,6 +62,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
         with(NotificationManagerCompat.from(this)) {
+
             notify(notificationId, builder.build())
         }
     }

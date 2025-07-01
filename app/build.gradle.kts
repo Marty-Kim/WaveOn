@@ -16,8 +16,8 @@ android {
         applicationId = "com.surfing.inthe.wavepark"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -88,7 +88,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.runtime:runtime-rxjava2")
-
+    implementation ("org.jsoup:jsoup:1.16.1")
     // Hilt DI
     implementation("com.google.dagger:hilt-android:2.56.2")
     ksp("com.google.dagger:hilt-android-compiler:2.56.2")
@@ -101,5 +101,7 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    ksp("com.github.bumptech.glide:compiler:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
 }

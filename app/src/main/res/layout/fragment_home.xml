@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background_primary">
 
@@ -19,6 +19,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:padding="8dp"
+            android:visibility="gone"
 
             >
             <ImageView
@@ -44,86 +45,98 @@
             app:cardElevation="6dp"
             app:strokeColor="@color/wave_blue"
             app:strokeWidth="2dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="12dp"
             android:backgroundTint="@color/wave_blue_light">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="20dp">
-
-                <ImageView
-                    android:id="@+id/img_weather_icon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:contentDescription="날씨 아이콘"
-                    android:tint="@color/ocean_blue_dark" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="invisible"
+                    android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/text_weather_desc"
+                    <ImageView
+                        android:id="@+id/img_weather_icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:contentDescription="날씨 아이콘"
+                        app:tint="@color/ocean_blue_dark" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:id="@+id/text_weather_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="맑음, 20°C"
+                            android:textAppearance="@style/TextAppearance.WavePark.Body1"
+                            android:textColor="@color/ocean_blue_dark"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/text_weather_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="경기도 시흥시 정왕동"
+                            android:textAppearance="@style/TextAppearance.WavePark.Caption"
+                            android:textColor="@color/text_on_primary"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="맑음, 25°C"
-                        android:textAppearance="@style/TextAppearance.WavePark.Body1"
-                        android:textColor="@color/ocean_blue_dark"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/text_weather_location"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="경기도 시흥시 정왕동"
-                        android:textAppearance="@style/TextAppearance.WavePark.Caption"
-                        android:textColor="@color/text_on_primary"
-                        android:layout_marginTop="2dp" />
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/text_water_temp_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="수온"
+                            android:textAppearance="@style/TextAppearance.WavePark.Caption"
+                            android:textColor="@color/text_on_primary" />
+                        <TextView
+                            android:id="@+id/text_water_temp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--°C"
+                            android:textAppearance="@style/TextAppearance.WavePark.Body1"
+                            android:textColor="@color/ocean_blue_dark"
+                            android:fontFamily="sans-serif-medium"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:id="@+id/text_water_temp_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="수온"
-                        android:textAppearance="@style/TextAppearance.WavePark.Caption"
-                        android:textColor="@color/text_on_primary" />
-                    <TextView
-                        android:id="@+id/text_water_temp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="--°C"
-                        android:textAppearance="@style/TextAppearance.WavePark.Body1"
-                        android:textColor="@color/ocean_blue_dark"
-                        android:fontFamily="sans-serif-medium"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 이벤트 목록 -->
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="이벤트"
-            android:textAppearance="@style/TextAppearance.WavePark.Headline2"
-            android:textColor="@color/ocean_blue"
-            android:paddingStart="32dp"
+            android:orientation="horizontal"
+            >
+            <!-- 이벤트 목록 -->
+            <TextView
+                android:id="@+id/eventBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주요 이벤트 ▶"
+                android:textAppearance="@style/TextAppearance.WavePark.Body1"
+                android:textColor="@color/ocean_blue"
+                android:paddingStart="14dp"
+                android:includeFontPadding="false"
+                android:paddingVertical="6dp" />
 
-            android:paddingTop="12dp"
-            android:paddingBottom="4dp" />
+        </LinearLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_events"
@@ -131,7 +144,6 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:overScrollMode="never"
             android:clipToPadding="false" />
 
         <!-- 인스타/홈페이지 이동 버튼 (하단 고정) -->
@@ -175,4 +187,4 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

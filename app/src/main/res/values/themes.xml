@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.WavePark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/ocean_blue</item>
+        <item name="colorPrimary">@color/wave_blue_light</item>
         <item name="colorPrimaryVariant">@color/ocean_blue</item>
         <item name="colorOnPrimary">@color/text_on_primary</item>
         <!-- Secondary brand color. -->

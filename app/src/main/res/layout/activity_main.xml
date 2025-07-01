@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/background_primary"
     >
 
 
@@ -35,11 +34,11 @@
 
         <!-- 이벤트 버튼 -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabEvent"
+            android:id="@+id/fabCallCenter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_notifications_black_24dp"
+            android:src="@drawable/icon_call_detail_img"
             app:fabSize="mini"
             app:tint="@color/white"
             app:backgroundTint="@color/coral_orange" />
@@ -50,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_dashboard_black_24dp"
+            android:src="@drawable/ic_calendar"
             app:fabSize="mini"
             app:tint="@color/white"
             app:backgroundTint="@color/wave_blue" />
@@ -75,7 +74,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_home_black_24dp"
+        android:src="@drawable/figma_icon_menu"
         app:tint="@color/white"
         app:backgroundTint="@color/ocean_blue"
         app:layout_constraintBottom_toBottomOf="parent"

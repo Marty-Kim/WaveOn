@@ -35,9 +35,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_dashboard_black_24dp"
+            android:src="@drawable/ic_calendar"
             android:contentDescription="@string/change_date"
-            android:tint="@color/ocean_blue"
             android:padding="8dp" />
 
         <ImageButton

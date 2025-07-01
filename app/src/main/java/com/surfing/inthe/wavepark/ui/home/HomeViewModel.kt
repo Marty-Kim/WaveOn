@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import com.surfing.inthe.wavepark.BuildConfig
+import com.surfing.inthe.wavepark.R
 
 /**
  * Home 화면의 ViewModel (MVVM)
@@ -34,30 +35,35 @@ class HomeViewModel @Inject constructor(
         // 실제 날씨 정보 fetch
         viewModelScope.launch {
             println("Home ViewModel Scope launched")
-            _events.value = eventRepository.getEventsFromFirestore()
+//            _events.value = eventRepository.getEventsFromFirestore()
 //            fetchWeatherInfo()
+
+            eventRepository.getEventsFromFirestoreWithImages { newList ->
+                _events.postValue(newList)
+
+            }
         }
 
     }
 
-//    private suspend fun fetchWeatherInfo() {
-//        // 시흥시 정왕동 위도/경도 (예시: 37.3402, 126.7335)
-//        val lat = 37.3402
-//        val lon = 126.7335
-//        val apiKey = BuildConfig.OPENWEATHER_API_KEY
-//        val url = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=kr"
-//        val client = OkHttpClient()
-//        val request = Request.Builder().url(url).build()
-//        val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
-//        if (response.isSuccessful) {
-//            response.body?.string()?.let { body ->
-//                val json = JSONObject(body)
-//                val weatherArray = json.getJSONArray("weather")
-//                val weatherObj = weatherArray.getJSONObject(0)
-//                val main = json.getJSONObject("main")
-//                val desc = weatherObj.getString("description")
-//                val temp = main.getDouble("temp")
-//                val icon = weatherObj.getString("icon")
+    private suspend fun fetchWeatherInfo() {
+        // 시흥시 정왕동 위도/경도 (예시: 37.3402, 126.7335)
+        val lat = 37.3402
+        val lon = 126.7335
+        val apiKey = BuildConfig.OPENWEATHER_API_KEY
+        val url = "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=kr"
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+        val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
+        if (response.isSuccessful) {
+            response.body?.string()?.let { body ->
+                val json = JSONObject(body)
+                val weatherArray = json.getJSONArray("weather")
+                val weatherObj = weatherArray.getJSONObject(0)
+                val main = json.getJSONObject("main")
+                val desc = weatherObj.getString("description")
+                val temp = main.getDouble("temp")
+                val icon = weatherObj.getString("icon")
 //                val iconRes = when {
 //                    icon.startsWith("01") -> com.surfing.inthe.wavepark.R.drawable.ic_weather_sunny
 //                    icon.startsWith("02") -> com.surfing.inthe.wavepark.R.drawable.ic_weather_cloudy
@@ -67,14 +73,14 @@ class HomeViewModel @Inject constructor(
 //                    icon.startsWith("13") -> com.surfing.inthe.wavepark.R.drawable.ic_weather_snow
 //                    else -> com.surfing.inthe.wavepark.R.drawable.ic_weather_sunny
 //                }
-//                _weatherInfo.postValue(WeatherInfo(
-//                    iconRes = iconRes,
-//                    desc = "${desc.replaceFirstChar { it.uppercase() }}, ${temp.toInt()}°C",
-//                    location = "경기도 시흥시 정왕동"
-//                ))
-//            }
-//        }
-//    }
+                _weatherInfo.postValue(WeatherInfo(
+                    iconRes = R.drawable.ic_home_black_24dp,
+                    desc = "${desc.replaceFirstChar { it.uppercase() }}, ${temp.toInt()}°C",
+                    location = "경기도 시흥시 정왕동"
+                ))
+            }
+        }
+    }
 
     data class WeatherInfo(
         val iconRes: Int,

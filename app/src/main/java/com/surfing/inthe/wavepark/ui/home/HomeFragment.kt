@@ -1,5 +1,6 @@
 package com.surfing.inthe.wavepark.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.surfing.inthe.wavepark.databinding.FragmentHomeBinding
 import com.surfing.inthe.wavepark.R
+import com.surfing.inthe.wavepark.ui.event.EventListActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.jvm.java
 
 /**
  * Home 화면의 Fragment (MVVM)
@@ -32,7 +35,14 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         setupEventRecyclerView()
         observeViewModel()
+        initViews()
         return binding.root
+    }
+
+    private fun initViews() {
+        binding.eventBtn.setOnClickListener {
+            startActivity(Intent(context, EventListActivity::class.java))
+        }
     }
 
     // RecyclerView 초기화
@@ -47,10 +57,16 @@ class HomeFragment : Fragment() {
     // ViewModel의 LiveData를 관찰하여 UI 업데이트
     private fun observeViewModel() {
         homeViewModel.events.observe(viewLifecycleOwner) { events ->
-            events.forEach {
-                println("events ${it.title}" )
-            }
-            eventAdapter.submitList(events)
+
+            eventAdapter.submitList(events.filter {
+                if (it.title.contains("서핑") ||
+                    it.title.contains("surfing",true) ||
+                    it.title.contains("night",true) ||
+                    it.title.contains("surf pass",true) ||
+                    it.title.contains("펀딩") ||
+                    it.title.contains("레슨") ) true
+                else false
+            })
         }
         // 날씨 정보 관찰 및 UI 반영
         homeViewModel.weatherInfo.observe(viewLifecycleOwner) { info ->

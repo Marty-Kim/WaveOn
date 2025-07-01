@@ -1,5 +1,7 @@
 package com.surfing.inthe.wavepark
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -72,31 +74,35 @@ class MainActivity : AppCompatActivity() {
     private fun setupFloatingActionButtons() {
         val fabMain = binding.fabMain
         val fabContainer = binding.fabContainer
-        val fabEvent = binding.fabEvent
+        val fabCallCenter = binding.fabCallCenter
         val fabReservation = binding.fabReservation
         val fabCarpool = binding.fabCarpool
 
         fabMain.setOnClickListener {
             toggleFabMenu()
         }
-        fabEvent.setOnClickListener {
-            Toast.makeText(this, "이벤트 기능", Toast.LENGTH_SHORT).show()
+        fabCallCenter.setOnClickListener {
+//            Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
             collapseFabMenu()
+            val url = "https://open.kakao.com/o/svHiFBeb"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
         }
         fabReservation.setOnClickListener {
-            Toast.makeText(this, "예약 기능", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "준비중", Toast.LENGTH_SHORT).show()
             collapseFabMenu()
         }
         fabCarpool.setOnClickListener {
             // 카풀 리스트 화면으로 이동 (add/hide/show 방식으로 통일)
-            val carpoolFragment = fragments[R.id.navigation_dashboard]!! // 예시: DashboardFragment로 이동
-            if (activeFragment != carpoolFragment) {
-                fragmentManager.beginTransaction()
-                    .hide(activeFragment!!)
-                    .show(carpoolFragment)
-                    .commit()
-                activeFragment = carpoolFragment
-            }
+            Toast.makeText(this, "카풀 준비중", Toast.LENGTH_SHORT).show()
+//            val carpoolFragment = fragments[R.id.navigation_dashboard]!! // 예시: DashboardFragment로 이동
+//            if (activeFragment != carpoolFragment) {
+//                fragmentManager.beginTransaction()
+//                    .hide(activeFragment!!)
+//                    .show(carpoolFragment)
+//                    .commit()
+//                activeFragment = carpoolFragment
+//            }
             collapseFabMenu()
         }
     }
@@ -115,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         binding.fabContainer.visibility = View.VISIBLE
         binding.fabContainer.alpha = 0f
         binding.fabContainer.animate().alpha(1f).setDuration(300).start()
-        binding.fabEvent.animate().translationY(0f).setDuration(300).start()
+        binding.fabCallCenter.animate().translationY(0f).setDuration(300).start()
         binding.fabReservation.animate().translationY(-40f).setDuration(300).start()
         binding.fabCarpool.animate().translationY(-80f).setDuration(300).start()
     }
@@ -126,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         binding.fabContainer.animate().alpha(0f).setDuration(300).withEndAction {
             binding.fabContainer.visibility = View.GONE
         }.start()
-        binding.fabEvent.animate().translationY(0f).setDuration(300).start()
+        binding.fabCallCenter.animate().translationY(0f).setDuration(300).start()
         binding.fabReservation.animate().translationY(0f).setDuration(300).start()
         binding.fabCarpool.animate().translationY(0f).setDuration(300).start()
     }

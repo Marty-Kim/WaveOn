@@ -4,7 +4,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_webview">Web</string>
-    
+
     <!-- Dashboard -->
     <string name="dashboard_title">서핑 예약 현황</string>
     <string name="dashboard_subtitle">실시간 예약 현황을 확인하세요</string>
@@ -12,25 +12,25 @@
     <string name="change_date">날짜 변경</string>
     <string name="refresh">새로고침</string>
     <string name="total_sessions">총 %d개 세션</string>
-    
+
     <!-- Table Headers -->
     <string name="table_header_time">시간</string>
     <string name="table_header_session">세션</string>
     <string name="table_header_direction">방향</string>
     <string name="table_header_remaining_seats">잔여좌석</string>
-    
+
     <!-- Error Messages -->
     <string name="error_loading_reservation">예약 데이터를 불러오는데 실패했습니다: %s</string>
     <string name="error_network">네트워크 오류가 발생했습니다</string>
-    
+
     <!-- Loading -->
     <string name="loading_reservation">예약 정보를 불러오는 중...</string>
-    
+
     <!-- Session Types -->
     <string name="session_beginner">초급</string>
     <string name="session_intermediate">중급</string>
     <string name="session_advanced">상급</string>
-    
+
     <!-- Directions -->
     <string name="direction_left">좌</string>
     <string name="direction_right">우</string>
