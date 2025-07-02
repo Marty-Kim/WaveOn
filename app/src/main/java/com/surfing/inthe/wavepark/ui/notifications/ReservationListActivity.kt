@@ -109,7 +109,7 @@ fun QrDialog(qrContent: String, onDismiss: () -> Unit) {
                     contentDescription = "QR Code",
                     modifier = Modifier.size(240.dp)
                 )
-                Text(qrContent, modifier = Modifier.padding(top = 8.dp))
+//                Text(qrContent, modifier = Modifier.padding(top = 8.dp))
             }
         },
         confirmButton = {
