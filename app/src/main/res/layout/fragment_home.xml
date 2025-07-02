@@ -57,15 +57,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:visibility="invisible"
-                    android:padding="20dp">
+                    android:padding="12dp">
 
                     <ImageView
                         android:id="@+id/img_weather_icon"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:contentDescription="날씨 아이콘"
-                        app:tint="@color/ocean_blue_dark" />
+                        android:contentDescription="날씨 아이콘" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -78,13 +76,15 @@
                             android:id="@+id/text_weather_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="맑음, 20°C"
+                            android:text="--, --°C"
                             android:textAppearance="@style/TextAppearance.WavePark.Body1"
                             android:textColor="@color/ocean_blue_dark"
+                            android:includeFontPadding="false"
                             android:textStyle="bold" />
                         <TextView
                             android:id="@+id/text_weather_location"
                             android:layout_width="wrap_content"
+                            android:includeFontPadding="false"
                             android:layout_height="wrap_content"
                             android:text="경기도 시흥시 정왕동"
                             android:textAppearance="@style/TextAppearance.WavePark.Caption"
@@ -100,6 +100,7 @@
                         <TextView
                             android:id="@+id/text_water_temp_label"
                             android:layout_width="wrap_content"
+                            android:includeFontPadding="false"
                             android:layout_height="wrap_content"
                             android:text="수온"
                             android:textAppearance="@style/TextAppearance.WavePark.Caption"

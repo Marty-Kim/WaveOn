@@ -9,6 +9,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,12 +25,22 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import org.json.JSONObject
+import org.jsoup.Jsoup
+import org.jsoup.Connection
+import org.jsoup.nodes.Document
+import kotlinx.coroutines.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.surfing.inthe.wavepark.databinding.FragmentWebviewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import androidx.fragment.app.viewModels
+import com.surfing.inthe.wavepark.data.model.Reservation
+import com.surfing.inthe.wavepark.ui.notifications.ReservationListActivity
+import com.surfing.inthe.wavepark.ui.notifications.ReservationViewModel
 
 /**
  * MVVM의 View(UI) 역할.
@@ -47,6 +60,7 @@ class WebViewFragment : Fragment() {
     private var savedUsername = ""
     private var savedPassword = ""
     private var isFabExpanded = false
+    private var webViewUserAgent: String? = null
 
     // SharedPreferences 키
     companion object {
@@ -55,7 +69,11 @@ class WebViewFragment : Fragment() {
         private const val KEY_PASSWORD = "appPw"
         private const val KEY_IS_LOGGED_IN = "isOnAuto"
         private const val KEY_SESSION_COOKIE = "session_cookie"
+        private const val TAG = "WebViewFragment"
     }
+
+    // ViewModel Hilt 주입
+    private val reservationViewModel: ReservationViewModel by viewModels()
 
     // 파일 업로드 콜백
     private val fileChooserLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -91,112 +109,47 @@ class WebViewFragment : Fragment() {
     }
 
     private fun setupFloatingActionButtons() {
-        // 메인 FAB 클릭 이벤트
         binding.fabMain.setOnClickListener {
-            toggleFabMenu()
-        }
-
-        // 예약 버튼 클릭 이벤트
-        binding.fabReservation.setOnClickListener {
-            handleReservationClick()
-        }
-
-        // 이벤트 버튼 클릭 이벤트
-        binding.fabEvent.setOnClickListener {
-            handleEventClick()
+            // 리스트 화면으로 이동
+            val intent = Intent(requireContext(), ReservationListActivity::class.java)
+            startActivity(intent)
         }
     }
+    
 
-    private fun toggleFabMenu() {
-        if (isFabExpanded) {
-            // 축소 애니메이션
-            collapseFabMenu()
-        } else {
-            // 확장 애니메이션
-            expandFabMenu()
-        }
-    }
+    
 
-    private fun expandFabMenu() {
-        isFabExpanded = true
-        
-        // 메인 FAB 회전 애니메이션
-        binding.fabMain.animate()
-            .rotation(45f)
-            .setDuration(300)
-            .start()
-
-        // 확장 버튼들 표시 및 애니메이션
-        binding.fabContainer.visibility = View.VISIBLE
-        binding.fabContainer.alpha = 0f
-        binding.fabContainer.animate()
-            .alpha(1f)
-            .setDuration(300)
-            .start()
-
-        // 각 버튼 개별 애니메이션
-        binding.fabEvent.animate()
-            .translationY(-80f)
-            .setDuration(300)
-            .start()
-
-        binding.fabReservation.animate()
-            .translationY(-160f)
-            .setDuration(300)
-            .start()
-    }
-
-    private fun collapseFabMenu() {
-        isFabExpanded = false
-        
-        // 메인 FAB 회전 애니메이션
-        binding.fabMain.animate()
-            .rotation(0f)
-            .setDuration(300)
-            .start()
-
-        // 축소 애니메이션
-        binding.fabContainer.animate()
-            .alpha(0f)
-            .setDuration(300)
-            .withEndAction {
-                binding.fabContainer.visibility = View.GONE
+    
+    private fun showParsedDataDialog(title: String, data: Map<String, Any>) {
+        val message = buildString {
+            appendLine("파싱된 데이터:")
+            data.forEach { (key, value) ->
+                when (value) {
+                    is String -> appendLine("$key: $value")
+                    is List<*> -> appendLine("$key: ${value.size}개 항목")
+                    else -> appendLine("$key: $value")
+                }
             }
-            .start()
+        }
+        
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("확인", null)
+            .show()
+    }
+    
+    private fun showDialog(title: String, message: String) {
+        activity?.runOnUiThread {
+            AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("확인", null)
+            .show()
+        }
 
-        // 각 버튼 원위치로
-        binding.fabEvent.animate()
-            .translationY(0f)
-            .setDuration(300)
-            .start()
-
-        binding.fabReservation.animate()
-            .translationY(0f)
-            .setDuration(300)
-            .start()
     }
 
-    private fun handleReservationClick() {
-        // 예약 기능 구현
-        Toast.makeText(requireContext(), "예약 기능", Toast.LENGTH_SHORT).show()
-        
-        // WebView에서 예약 페이지로 이동
-        binding.webView.loadUrl("https://wavepark.co.kr/reservation")
-        
-        // 메뉴 축소
-        collapseFabMenu()
-    }
-
-    private fun handleEventClick() {
-        // 이벤트 기능 구현
-        Toast.makeText(requireContext(), "이벤트 기능", Toast.LENGTH_SHORT).show()
-        
-        // WebView에서 이벤트 페이지로 이동
-        binding.webView.loadUrl("https://wavepark.co.kr/events")
-        
-        // 메뉴 축소
-        collapseFabMenu()
-    }
 
     private fun loadLoginInfo() {
         val prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -248,6 +201,9 @@ class WebViewFragment : Fragment() {
         settings.displayZoomControls = false
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.userAgentString = settings.userAgentString + " WaveParkApp"
+
+        // userAgentString을 미리 저장
+        webViewUserAgent = settings.userAgentString
 
         // JavaScript 인터페이스 추가
         webView.addJavascriptInterface(object {
@@ -316,6 +272,7 @@ class WebViewFragment : Fragment() {
         }
 
         webView.webViewClient = object : WebViewClient() {
+            var isFirstInit = true
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 // 로딩 시작 시 프로그레스바 표시 (선택사항)
@@ -363,6 +320,14 @@ class WebViewFragment : Fragment() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                // WebView 로딩 완료 후 1초 뒤에 예약 크롤링 시작
+                if (isFirstInit && isLoggedIn){
+                    isFirstInit = false
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        crawlMyPageReservationsAsync(3)
+                    }, 1000)
+                }
+
                 
                 // 로딩 완료 시 프로그레스바 숨김 (선택사항)
                 // binding.progressBar.visibility = View.GONE
@@ -422,6 +387,7 @@ class WebViewFragment : Fragment() {
                         requireActivity().runOnUiThread {
                             binding.webView.loadUrl("https://wavepark.co.kr/")
                         }
+                        onLoginSuccess()
                     } else {
                         // 로그인 실패 시 로그인 페이지로
                         requireActivity().runOnUiThread {
@@ -438,36 +404,6 @@ class WebViewFragment : Fragment() {
         } else {
             // 저장된 로그인 정보 없으면 로그인 페이지로
             binding.webView.loadUrl("https://wavepark.co.kr/login")
-        }
-    }
-
-    private fun checkAndSaveLoginInfo(webView: WebView?) {
-        webView?.let { view ->
-            val checkScript = """
-                (function() {
-                    // 로그인 상태 확인 (예: 사용자 이름 표시, 로그아웃 버튼 등)
-                    var userInfo = document.querySelector('.user-name, .user-info, .profile-name, .welcome-message');
-                    var logoutBtn = document.querySelector('.logout, .btn-logout, a[href*="logout"]');
-                    
-                    if (userInfo || logoutBtn) {
-                        return {
-                            isLoggedIn: true,
-                            username: userInfo ? userInfo.textContent.trim() : ''
-                        };
-                    }
-                    return { isLoggedIn: false, username: '' };
-                })();
-            """.trimIndent()
-            
-            view.evaluateJavascript(checkScript) { result ->
-                if (result.contains("true")) {
-                    // 로그인 성공으로 간주
-                    isLoggedIn = true
-                    val prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                    prefs.edit().putInt(KEY_IS_LOGGED_IN, 1).apply()
-                    Toast.makeText(requireContext(), "로그인 정보가 저장되었습니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 
@@ -520,6 +456,241 @@ class WebViewFragment : Fragment() {
         clearLoginInfo()
         binding.webView.loadUrl("https://wavepark.co.kr/")
         Toast.makeText(requireContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+    
+    /**
+     * 웹뷰의 쿠키를 추출하여 문자열로 반환
+     */
+    private fun getWebViewCookies(): String {
+        val cookieManager = CookieManager.getInstance()
+        val cookies = cookieManager.getCookie("https://wavepark.co.kr")
+        return cookies ?: ""
+    }
+    
+    /**
+     * 웹뷰의 User-Agent를 가져오기
+     */
+    private fun getWebViewUserAgent(): String {
+        return webViewUserAgent ?: "WaveParkApp"
+    }
+    
+    /**
+     * 로그인된 세션으로 특정 URL에 접근하여 Jsoup으로 파싱
+     * @param url 파싱할 URL
+     * @param callback 파싱 결과를 받을 콜백
+     */
+    fun parseUrlWithSession(url: String, callback: (Document?, String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // 웹뷰의 쿠키와 User-Agent 가져오기
+                val cookies = getWebViewCookies()
+                val userAgent = getWebViewUserAgent()
+                
+                if (cookies.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        callback(null, "쿠키가 없습니다. 로그인이 필요합니다.")
+                    }
+                    return@launch
+                }
+                
+                // Jsoup으로 요청 보내기 (더 많은 브라우저 헤더 추가)
+                val connection: Connection = Jsoup.connect(url)
+                    .userAgent(userAgent)
+                    .header("Cookie", cookies)
+                    .header("Referer", "https://wavepark.co.kr/")
+                    .header("Host", "www.wavepark.co.kr")
+                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                    .header("Connection", "keep-alive")
+                    .header("Upgrade-Insecure-Requests", "1")
+                    .header("Cache-Control", "max-age=0")
+                    .header("Sec-Fetch-Mode", "navigate")
+                    .header("Sec-Fetch-User", "?1")
+                    .header("Sec-Fetch-Site", "same-origin")
+                    .header("Sec-Fetch-Dest", "document")
+                    .timeout(10000)
+                    .followRedirects(true)
+                
+                val document: Document = connection.get()
+                println("[예약파싱]  ${document.toString()}")
+                withContext(Dispatchers.Main) {
+                    callback(document, null)
+                }
+                
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    callback(null, "파싱 오류: ${e.message}")
+                }
+            }
+        }
+    }
+    
+    /**
+     * 특정 URL의 데이터를 파싱하여 콜백으로 반환
+     * @param url 파싱할 URL
+     * @param callback 파싱된 데이터를 받을 콜백
+     */
+    fun parseSpecificData(url: String, callback: (Map<String, Any>?, String?) -> Unit) {
+        parseUrlWithSession(url) { document, error ->
+            if (error != null) {
+                callback(null, error)
+                return@parseUrlWithSession
+            }
+            
+            document?.let { doc ->
+                try {
+                    val data = mutableMapOf<String, Any>()
+                    
+                    // 예시: 특정 요소들 파싱
+                    // 제목
+                    val title = doc.select("h1, h2, .title").firstOrNull()?.text()
+                    title?.let { data["title"] = it }
+                    
+                    // 내용
+                    val content = doc.select(".content, .body, .text").firstOrNull()?.text()
+                    content?.let { data["content"] = it }
+                    
+                    // 이미지
+                    val images = doc.select("img").map { it.attr("src") }
+                    if (images.isNotEmpty()) {
+                        data["images"] = images
+                    }
+                    
+                    // 링크
+                    val links = doc.select("a").map { 
+                        mapOf(
+                            "text" to it.text(),
+                            "href" to it.attr("href")
+                        )
+                    }
+                    if (links.isNotEmpty()) {
+                        data["links"] = links
+                    }
+                    
+                    // 테이블 데이터
+                    val tables = doc.select("table").map { table ->
+                        table.select("tr").map { row ->
+                            row.select("td, th").map { it.text() }
+                        }
+                    }
+                    if (tables.isNotEmpty()) {
+                        data["tables"] = tables
+                    }
+                    
+                    callback(data, null)
+                    
+                } catch (e: Exception) {
+                    callback(null, "데이터 파싱 오류: ${e.message}")
+                }
+            }
+        }
+    }
+    
+    // 로그인 성공 후 예약내역 자동 크롤링
+    private fun onLoginSuccess() {
+        showFabLoading(true)
+//        crawlMyPageReservationsAsync(3)
+    }
+    // FAB ProgressBar 표시/숨김
+    private fun completeFabLoading() {
+        activity?.runOnUiThread {
+            binding.fabProgress.visibility = View.GONE
+            binding.fabMain.visibility = View.VISIBLE
+        }
+    }
+    // FAB ProgressBar 표시/숨김
+    private fun showFabLoading(show: Boolean) {
+        activity?.runOnUiThread {
+            binding.fabProgress.visibility = if (show) View.VISIBLE else View.GONE
+            binding.fabMain.visibility = if (!show) View.VISIBLE else View.GONE
+        }
+    }
+
+    // 3페이지를 async로 동시에 요청, 예약일자 오늘 이후만 collect, 각 페이지마다 emit
+    fun crawlMyPageReservationsAsync(maxPage: Int = 3) {
+        reservationViewModel.clear()
+        reservationViewModel.setLoading(true)
+        showFabLoading(true)
+        Log.d(TAG, "[예약크롤] 크롤링 시작")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val today = LocalDate.now()
+                val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+                val deferreds = (1..maxPage).map { page ->
+                    async {
+                        try {
+                            Log.d(TAG, "[예약크롤] page=$page 크롤링 시작")
+                            val url = if (page == 1) "https://www.wavepark.co.kr/mypage" else "https://www.wavepark.co.kr/mypage?page=$page"
+                            val cookies = getWebViewCookies()
+                            val userAgent = getWebViewUserAgent()
+                            val connection: org.jsoup.Connection = org.jsoup.Jsoup.connect(url)
+                                .userAgent(userAgent)
+                                .header("Cookie", cookies)
+                                .header("Host", "www.wavepark.co.kr")
+                                .header("Referer", "https://wavepark.co.kr/")
+                                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+                                .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                                .header("Connection", "keep-alive")
+                                .header("Upgrade-Insecure-Requests", "1")
+                                .header("Cache-Control", "max-age=0")
+                                .header("Sec-Fetch-Mode", "navigate")
+                                .header("Sec-Fetch-User", "?1")
+                                .header("Sec-Fetch-Site", "same-origin")
+                                .header("Sec-Fetch-Dest", "document")
+                                .timeout(30000)
+                                .followRedirects(true)
+                            val document = connection.get()
+                            val table = document.select("table.basic").firstOrNull()
+                            val reservations = mutableListOf<com.surfing.inthe.wavepark.data.model.Reservation>()
+                            if (table != null) {
+                                val rows = table.select("tbody tr.list-item-boxer")
+                                for (row in rows) {
+                                    val cells = row.select("td")
+                                    if (cells.size >= 6) {
+                                        try {
+                                            val date = LocalDate.parse(cells[1].text().trim(), formatter)
+                                            if (date.isAfter(today) || date.isEqual(today)) {
+                                                val applyDate = LocalDate.parse(cells[2].text().trim(), formatter)
+                                                val reservation = Reservation(
+                                                    number = cells[0].select("a").firstOrNull()?.attr("href")?.split("/")?.lastOrNull() ?: cells[0].text().trim(),
+                                                    date = date,
+                                                    applyDate = applyDate,
+                                                    product = cells[3].text().trim(),
+                                                    count = cells[4].text().trim(),
+                                                    status = cells[5].text().trim()
+                                                )
+                                                reservations.add(reservation)
+                                            }
+                                        } catch (_: Exception) {}
+                                    }
+                                }
+                            }
+                            Log.d(TAG, "[예약크롤] page=$page 크롤링 완료, 수집: ${reservations.size}")
+                            // 각 페이지마다 emit
+                            if (reservations.isNotEmpty()) {
+                                Log.d(TAG, "[예약크롤] page=$page addReservations 호출")
+                                reservationViewModel.addReservations(reservations)
+                                reservationViewModel.setLoading(false)
+                                completeFabLoading()
+                            }
+                            reservations
+                        } catch (e: Exception) {
+                            Log.e(TAG, "[예약크롤] page=$page 크롤링 오류: ${e.message}", e)
+                            emptyList<Reservation>()
+                        }
+                    }
+                }
+                deferreds.awaitAll()
+                Log.d(TAG, "[예약크롤] 모든 페이지 완료, 최종: ${reservationViewModel.reservations.value.size}")
+                // 모든 페이지 완료 후 무조건 로딩 해제
+                reservationViewModel.setLoading(false)
+                showFabLoading(false)
+            } catch (e: Exception) {
+                Log.e(TAG, "[예약크롤] 크롤링 오류: ${e.message}", e)
+                reservationViewModel.setLoading(false)
+                showFabLoading(false)
+            }
+        }
     }
 
     override fun onDestroyView() {

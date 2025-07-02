@@ -1,5 +1,6 @@
 package com.surfing.inthe.wavepark.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.surfing.inthe.wavepark.databinding.FragmentHomeBinding
 import com.surfing.inthe.wavepark.R
 import com.surfing.inthe.wavepark.ui.event.EventListActivity
+import com.surfing.inthe.wavepark.ui.viewmodel.TemperatureViewModel
+import com.surfing.inthe.wavepark.ui.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.jvm.java
 
@@ -25,6 +28,8 @@ class HomeFragment : Fragment() {
 
     // Hilt로 ViewModel 주입 (by viewModels())
     private val homeViewModel: HomeViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by viewModels()
+    private val temperatureViewModel: TemperatureViewModel by viewModels()
     private lateinit var eventAdapter: EventAdapter
 
     override fun onCreateView(
@@ -33,13 +38,22 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
         setupEventRecyclerView()
         observeViewModel()
         initViews()
+        
+        // WeatherViewModel 수동 호출
+        weatherViewModel.fetchWeatherData()
+        
+        // TemperatureViewModel 수동 호출 (필요한 경우)
+        // temperatureViewModel.fetchTemperatureData()
+        
         return binding.root
     }
 
     private fun initViews() {
+
         binding.eventBtn.setOnClickListener {
             startActivity(Intent(context, EventListActivity::class.java))
         }
@@ -55,9 +69,9 @@ class HomeFragment : Fragment() {
     }
 
     // ViewModel의 LiveData를 관찰하여 UI 업데이트
+    @SuppressLint("SetTextI18n")
     private fun observeViewModel() {
         homeViewModel.events.observe(viewLifecycleOwner) { events ->
-
             eventAdapter.submitList(events.filter {
                 if (it.title.contains("서핑") ||
                     it.title.contains("surfing",true) ||
@@ -69,11 +83,18 @@ class HomeFragment : Fragment() {
             })
         }
         // 날씨 정보 관찰 및 UI 반영
-        homeViewModel.weatherInfo.observe(viewLifecycleOwner) { info ->
-            binding.imgWeatherIcon.setImageResource(info.iconRes)
-            binding.textWeatherDesc.text = info.desc
-            binding.textWeatherLocation.text = info.location
+
+        weatherViewModel.weatherData.observe(viewLifecycleOwner) { weather ->
+            println("Weather ${weather.weatherStatus}")
+            binding.textWeatherDesc.text = "${weather.weatherStatus}  ${weather.temper}°C"
+            
+            // 날씨 상태에 따른 아이콘 설정
+            val weatherIconRes = weatherViewModel.getWeatherIconRes(weather.weatherStatus)
+            binding.imgWeatherIcon.setImageResource(weatherIconRes)
         }
+//        temperatureViewModel.temperatureData.observe(viewLifecycleOwner) { temperature ->
+//            homeViewModel.updateTemperatureInfo(temperature)
+//        }
     }
 
     override fun onDestroyView() {

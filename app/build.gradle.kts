@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
@@ -6,6 +8,13 @@ plugins {
     alias(libs.plugins.compose.compiler)
     kotlin("kapt")
     id("com.google.gms.google-services")
+}
+
+// local.properties 파일에서 API 키 읽기
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
 }
 
 android {
@@ -21,8 +30,23 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val apiKey: String = project.findProperty("OPENWEATHER_API_KEY") as? String ?: "YOUR_API_KEY"
-        buildConfigField("String", "OPENWEATHER_API_KEY", "\"$apiKey\"")
+        // API Keys (local.properties에서 가져옴)
+        val openWeatherApiKey: String = localProperties.getProperty("OPENWEATHER_API_KEY") ?: "YOUR_OPENWEATHER_API_KEY"
+        val waveparkApiKey: String = localProperties.getProperty("WAVEPARK_API_KEY") ?: "YOUR_WAVEPARK_API_KEY"
+        val firebaseApiKey: String = localProperties.getProperty("FIREBASE_API_KEY") ?: "YOUR_FIREBASE_API_KEY"
+        
+        // API URLs (gradle.properties에서 가져옴)
+        val waveparkBaseUrl: String = project.findProperty("WAVEPARK_BASE_URL") as? String ?: "https://wavepark.co.kr"
+        val weatherApiBaseUrl: String = project.findProperty("WEATHER_API_BASE_URL") as? String ?: "https://apis.data.go.kr/"
+        val temperatureApiBaseUrl: String = project.findProperty("TEMPERATURE_API_BASE_URL") as? String ?: "https://api.example.com/temperature"
+        
+        // BuildConfig 필드 생성
+        buildConfigField("String", "OPENWEATHER_API_KEY", "\"$openWeatherApiKey\"")
+        buildConfigField("String", "WAVEPARK_API_KEY", "\"$waveparkApiKey\"")
+        buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
+        buildConfigField("String", "WAVEPARK_BASE_URL", "\"$waveparkBaseUrl\"")
+        buildConfigField("String", "WEATHER_API_BASE_URL", "\"$weatherApiBaseUrl\"")
+        buildConfigField("String", "TEMPERATURE_API_BASE_URL", "\"$temperatureApiBaseUrl\"")
     }
 
     buildTypes {
@@ -103,5 +127,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     ksp("com.github.bumptech.glide:compiler:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.google.zxing:core:3.5.2")
 
 }

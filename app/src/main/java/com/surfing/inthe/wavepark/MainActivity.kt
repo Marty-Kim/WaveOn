@@ -12,12 +12,14 @@ import androidx.navigation.ui.setupWithNavController
 import com.surfing.inthe.wavepark.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import android.view.View
+import android.view.View.VISIBLE
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.surfing.inthe.wavepark.ui.dashboard.DashboardFragment
 import com.surfing.inthe.wavepark.ui.home.HomeFragment
+import com.surfing.inthe.wavepark.ui.notifications.ReservationListActivity
 import com.surfing.inthe.wavepark.ui.notifications.WebViewFragment
 
 @AndroidEntryPoint
@@ -63,6 +65,8 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 activeFragment = selectedFragment
             }
+            binding.fabMain.visibility = if (activeFragment is WebViewFragment) View.GONE else VISIBLE
+            collapseFabMenu()
             true
         }
 
@@ -89,7 +93,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         fabReservation.setOnClickListener {
-            Toast.makeText(this, "준비중", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "준비중", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ReservationListActivity::class.java))
             collapseFabMenu()
         }
         fabCarpool.setOnClickListener {

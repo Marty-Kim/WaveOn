@@ -14,6 +14,7 @@ import okhttp3.Request
 import org.json.JSONObject
 import com.surfing.inthe.wavepark.BuildConfig
 import com.surfing.inthe.wavepark.R
+import com.surfing.inthe.wavepark.data.model.WeatherData
 
 /**
  * Home 화면의 ViewModel (MVVM)
@@ -37,7 +38,6 @@ class HomeViewModel @Inject constructor(
             println("Home ViewModel Scope launched")
 //            _events.value = eventRepository.getEventsFromFirestore()
 //            fetchWeatherInfo()
-
             eventRepository.getEventsFromFirestoreWithImages { newList ->
                 _events.postValue(newList)
 
@@ -80,6 +80,10 @@ class HomeViewModel @Inject constructor(
                 ))
             }
         }
+    }
+
+    fun updateWeatherInfo(data: WeatherData) {
+
     }
 
     data class WeatherInfo(
