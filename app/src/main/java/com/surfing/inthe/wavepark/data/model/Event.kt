@@ -1,13 +1,8 @@
-package com.surfing.inthe.wavepark.data.database.entity
+package com.surfing.inthe.wavepark.data.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import java.util.Date
 
-@Entity(tableName = "events")
-data class EventEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+data class Event(
     val eventId: String,
     val title: String,
     val description: String,
@@ -19,8 +14,8 @@ data class EventEntity(
     val eventUrl: String? = null,
     val eventType: String? = null,
     val dDay: Int? = null,
-    val imageList: String = "", // JSON 문자열로 저장
+    val imageList: List<String> = listOf(),
     val createdAt: Date = Date(),
     val updatedAt: Date = Date(),
-    val lastSyncAt: Date = Date() // 마지막 동기화 시간
+    val lastSyncAt: Date = Date()
 ) 

@@ -20,6 +20,8 @@ import com.surfing.inthe.wavepark.data.model.Reservation
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class ReservationListActivity : ComponentActivity() {
@@ -38,11 +40,11 @@ fun ReservationListScreen(viewModel: ReservationViewModel) {
     val allReservations by viewModel.reservations.collectAsState()
     val loading by viewModel.loading.collectAsState()
 
-    // 필터: 오늘 이후 + 결제완료
-    val today = remember { java.time.LocalDate.now() }
+    // 필터: 오늘 이후 + 확인된 예약
+    val today = remember { java.util.Date() }
     val filtered = allReservations
-        .filter { (it.date.isAfter(today) || it.date.isEqual(today)) && it.status == "결제완료" }
-        .sortedBy { it.date }
+        .filter { it.sessionDate >= today && it.status == "confirmed" }
+        .sortedBy { it.sessionDate }
 
     Scaffold(
         topBar = {
@@ -121,6 +123,8 @@ fun QrDialog(qrContent: String, onDismiss: () -> Unit) {
 @Composable
 fun ReservationItem(reservation: Reservation) {
     var showQr by remember { mutableStateOf(false) }
+    val dateFormatter = remember { SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA) }
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,10 +137,12 @@ fun ReservationItem(reservation: Reservation) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("상품명: ${reservation.product}")
-                Text("수량: ${reservation.count}")
-                Text("이용일자: ${reservation.date}")
-                Text("예약일자: ${reservation.applyDate}")
+                Text("세션 타입: ${reservation.sessionType}")
+                Text("세션 시간: ${reservation.sessionTime}")
+                Text("이용일자: ${dateFormatter.format(reservation.sessionDate)}")
+                Text("잔여 좌석: ${reservation.remainingSeats}/${reservation.totalSeats}")
+                Text("가격: ${reservation.price}원")
+                Text("상태: ${reservation.status}")
             }
             Button(
                 onClick = { showQr = true }
@@ -145,7 +151,7 @@ fun ReservationItem(reservation: Reservation) {
             }
         }
         if (showQr) {
-            QrDialog(qrContent = reservation.number, onDismiss = { showQr = false })
+            QrDialog(qrContent = reservation.reservationNumber, onDismiss = { showQr = false })
         }
     }
 } 

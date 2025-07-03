@@ -608,7 +608,7 @@ class WebViewFragment : Fragment() {
 
     // 3페이지를 async로 동시에 요청, 예약일자 오늘 이후만 collect, 각 페이지마다 emit
     fun crawlMyPageReservationsAsync(maxPage: Int = 3) {
-        reservationViewModel.clear()
+        reservationViewModel.clearReservations()
         reservationViewModel.setLoading(true)
         showFabLoading(true)
         Log.d(TAG, "[예약크롤] 크롤링 시작")
@@ -648,16 +648,25 @@ class WebViewFragment : Fragment() {
                                     val cells = row.select("td")
                                     if (cells.size >= 6) {
                                         try {
-                                            val date = LocalDate.parse(cells[1].text().trim(), formatter)
+                                            val dateStr = cells[1].text().trim()
+                                            val date = LocalDate.parse(dateStr, formatter)
                                             if (date.isAfter(today) || date.isEqual(today)) {
-                                                val applyDate = LocalDate.parse(cells[2].text().trim(), formatter)
+                                                val applyDateStr = cells[2].text().trim()
+                                                val applyDate = LocalDate.parse(applyDateStr, formatter)
+                                                
+                                                // LocalDate를 Date로 변환
+                                                val sessionDate = java.util.Date.from(date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
+                                                val createdAt = java.util.Date.from(applyDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
+                                                
                                                 val reservation = Reservation(
-                                                    number = cells[0].select("a").firstOrNull()?.attr("href")?.split("/")?.lastOrNull() ?: cells[0].text().trim(),
-                                                    date = date,
-                                                    applyDate = applyDate,
-                                                    product = cells[3].text().trim(),
-                                                    count = cells[4].text().trim(),
-                                                    status = cells[5].text().trim()
+                                                    reservationNumber = cells[0].select("a").firstOrNull()?.attr("href")?.split("/")?.lastOrNull() ?: cells[0].text().trim(),
+                                                    sessionDate = sessionDate,
+                                                    sessionTime = "09:00", // 기본값, 실제로는 파싱 필요
+                                                    sessionType = cells[3].text().trim(),
+                                                    remainingSeats = 10, // 기본값, 실제로는 파싱 필요
+                                                    totalSeats = 20, // 기본값, 실제로는 파싱 필요
+                                                    price = 50000, // 기본값, 실제로는 파싱 필요
+                                                    status = if (cells[5].text().trim() == "결제완료") "confirmed" else "pending"
                                                 )
                                                 reservations.add(reservation)
                                             }

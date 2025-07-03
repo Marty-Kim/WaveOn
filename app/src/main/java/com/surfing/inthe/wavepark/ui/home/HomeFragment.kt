@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.surfing.inthe.wavepark.databinding.FragmentHomeBinding
 import com.surfing.inthe.wavepark.R
@@ -15,7 +17,7 @@ import com.surfing.inthe.wavepark.ui.event.EventListActivity
 import com.surfing.inthe.wavepark.ui.viewmodel.TemperatureViewModel
 import com.surfing.inthe.wavepark.ui.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.jvm.java
+import kotlinx.coroutines.launch
 
 /**
  * Home 화면의 Fragment (MVVM)
@@ -27,9 +29,9 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     // Hilt로 ViewModel 주입 (by viewModels())
-    private val homeViewModel: HomeViewModel by viewModels()
-    private val weatherViewModel: WeatherViewModel by viewModels()
-    private val temperatureViewModel: TemperatureViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels<HomeViewModel>()
+    private val weatherViewModel: WeatherViewModel by activityViewModels<WeatherViewModel>()
+    private val temperatureViewModel: TemperatureViewModel by activityViewModels<TemperatureViewModel>()
     private lateinit var eventAdapter: EventAdapter
 
     override fun onCreateView(
@@ -42,12 +44,12 @@ class HomeFragment : Fragment() {
         setupEventRecyclerView()
         observeViewModel()
         initViews()
-        
+
         // WeatherViewModel 수동 호출
         weatherViewModel.fetchWeatherData()
-        
+
         // TemperatureViewModel 수동 호출 (필요한 경우)
-        // temperatureViewModel.fetchTemperatureData()
+         temperatureViewModel.fetchTemperatureData()
         
         return binding.root
     }
@@ -68,19 +70,29 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // ViewModel의 LiveData를 관찰하여 UI 업데이트
+    // ViewModel의 StateFlow를 관찰하여 UI 업데이트
     @SuppressLint("SetTextI18n")
     private fun observeViewModel() {
-        homeViewModel.events.observe(viewLifecycleOwner) { events ->
-            eventAdapter.submitList(events.filter {
-                if (it.title.contains("서핑") ||
-                    it.title.contains("surfing",true) ||
-                    it.title.contains("night",true) ||
-                    it.title.contains("surf pass",true) ||
-                    it.title.contains("펀딩") ||
-                    it.title.contains("레슨") ) true
-                else false
-            })
+        // 이벤트 데이터 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.events.collect { events ->
+                eventAdapter.submitList(events.filter {
+                    if (it.title.contains("서핑") ||
+                        it.title.contains("surfing",true) ||
+                        it.title.contains("night",true) ||
+                        it.title.contains("surf pass",true) ||
+                        it.title.contains("펀딩") ||
+                        it.title.contains("레슨") ) true
+                    else false
+                })
+            }
+        }
+        
+        // 로딩 상태 관찰
+        viewLifecycleOwner.lifecycleScope.launch {
+            homeViewModel.isLoading.collect { isLoading ->
+                // TODO: 로딩 UI 표시/숨김
+            }
         }
         // 날씨 정보 관찰 및 UI 반영
 
@@ -92,9 +104,9 @@ class HomeFragment : Fragment() {
             val weatherIconRes = weatherViewModel.getWeatherIconRes(weather.weatherStatus)
             binding.imgWeatherIcon.setImageResource(weatherIconRes)
         }
-//        temperatureViewModel.temperatureData.observe(viewLifecycleOwner) { temperature ->
-//            homeViewModel.updateTemperatureInfo(temperature)
-//        }
+        temperatureViewModel.temperatureData.observe(viewLifecycleOwner) { temperature ->
+            binding.textWaterTemp.text = "${String.format("%.1f", temperature.waterTemperature)}°C"
+        }
     }
 
     override fun onDestroyView() {

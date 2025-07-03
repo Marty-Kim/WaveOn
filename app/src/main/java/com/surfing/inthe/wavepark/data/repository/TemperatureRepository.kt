@@ -18,7 +18,7 @@ class TemperatureRepository @Inject constructor(
     private val waterTemperatureApiService: WaterTemperatureApiService,
     private val temperatureDataDao: TemperatureDataDao
 ) {
-    
+
     // RoomDB에서 최신 수온 데이터 가져오기
     suspend fun getLatestTemperatureData(): TemperatureData? {
         return temperatureDataDao.getLatestTemperatureData()?.toDomainModel()
@@ -30,7 +30,7 @@ class TemperatureRepository @Inject constructor(
             entities.map { it.toDomainModel() }
         }
     }
-    
+
     suspend fun fetchTemperatureData(): TemperatureResult = withContext(Dispatchers.IO) {
         try {
             val response = waterTemperatureApiService.getWaterTemperature()
@@ -46,7 +46,7 @@ class TemperatureRepository @Inject constructor(
             
             // RoomDB에 수온 데이터 저장
             saveTemperatureData(temperatureData)
-            
+
             TemperatureResult.Success(temperatureData)
             
         } catch (e: Exception) {
@@ -75,18 +75,18 @@ class TemperatureRepository @Inject constructor(
     private fun TemperatureDataEntity.toDomainModel(): TemperatureData {
         return TemperatureData(
             temperature = airTemperature,
-            humidity = 0, // Entity에 없는 값
+            humidity = 0.0, // Entity에 없는 값
             waterTemperature = waterTemperature,
             weather = null, // Entity에 없는 값
             recommendedWax = getRecommendedWax(waterTemperature),
-            timestamp = date.time
+            timestamp = date
         )
     }
 
     // 도메인 모델을 Entity로 변환하는 확장 함수
     private fun TemperatureData.toEntity(): TemperatureDataEntity {
         return TemperatureDataEntity(
-            date = Date(timestamp),
+            date = timestamp?: "",
             waterTemperature = waterTemperature ?: 0.0,
             airTemperature = temperature ?: 0.0,
             location = "WavePark" // 기본 위치

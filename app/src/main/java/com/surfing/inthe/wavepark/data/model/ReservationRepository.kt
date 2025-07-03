@@ -66,6 +66,11 @@ class ReservationRepository @Inject constructor(
         _loading.value = true
     }
 
+    // WebViewFragment에서 사용하는 메서드들
+    suspend fun addReservations(reservations: List<Reservation>) {
+        reservationDao.insertReservations(reservations.map { it.toEntity() })
+    }
+
     // Entity를 도메인 모델로 변환하는 확장 함수
     private fun ReservationEntity.toDomainModel(): Reservation {
         return Reservation(

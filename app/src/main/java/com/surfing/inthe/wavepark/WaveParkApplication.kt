@@ -9,4 +9,4 @@ import dagger.hilt.android.HiltAndroidApp
  * @HiltAndroidApp 어노테이션을 붙이면 Hilt가 DI 그래프를 자동 생성.
  */
 @HiltAndroidApp
-class WaveParkApplication : Application()
+class WaveOnApplication : Application()

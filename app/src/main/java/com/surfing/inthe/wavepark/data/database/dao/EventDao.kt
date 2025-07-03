@@ -7,7 +7,10 @@ import java.util.Date
 
 @Dao
 interface EventDao {
-    
+
+    @Query("SELECT * FROM events")
+    fun getAllEvents(): Flow<List<EventEntity>>
+
     @Query("SELECT * FROM events WHERE isActive = 1 ORDER BY startDate DESC")
     fun getAllActiveEvents(): Flow<List<EventEntity>>
     
@@ -40,4 +43,10 @@ interface EventDao {
     
     @Query("SELECT COUNT(*) FROM events WHERE isActive = 1")
     suspend fun getActiveEventCount(): Int
+    
+    @Query("SELECT MAX(lastSyncAt) FROM events")
+    suspend fun getLastSyncTime(): Date?
+    
+    @Query("SELECT COUNT(*) FROM events")
+    suspend fun getTotalEventCount(): Int
 } 

@@ -8,7 +8,7 @@ import java.util.Date
 data class TemperatureDataEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val date: Date,
+    val date: String,
     val waterTemperature: Double,
     val airTemperature: Double,
     val location: String,

@@ -4,7 +4,7 @@ import retrofit2.http.GET
 
 interface WaterTemperatureApiService {
     
-    @GET("temperature")
+    @GET("Prod/environment")
     suspend fun getWaterTemperature(): WaterTemperatureResponse
 }
 
