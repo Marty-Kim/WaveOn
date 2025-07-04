@@ -2,6 +2,8 @@ package com.surfing.inthe.wavepark.ui.dashboard
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBar.LayoutParams
@@ -75,20 +77,32 @@ class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>
             val startTime = session.time.takeLast(8).substring(0, 5)
             val endTime = try {
                 val hour = startTime.substring(0, 2).toInt()
-                val nextHour = (hour + 1) % 24
+                val nextHour = (hour + (if (session.isfunding) 2 else 1)) % 24
                 String.format("%02d:%s", nextHour, startTime.substring(3, 5))
             } catch (e: Exception) {
                 "--:--"
             }
             binding.textTimeRange.text = "$startTime~$endTime"
             binding.textSession.text = "${session.name} (${session.waves})"
+            binding.textLeftCove.visibility = VISIBLE
+            binding.textLeftSeat.visibility = VISIBLE
             if (isLesson) {
                 binding.textLeftCove.text = "좌"
                 binding.textLeftSeat.text = session.left.toString()
                 binding.textRightCove.text = "우"
                 binding.textRightSeat.text = "-"
                 cardView?.strokeColor = ContextCompat.getColor(context, R.color.session_blue)
-            } else {
+            } else if (session.isfunding){
+//                binding.textLeftCove.text = "펀딩률"
+//                val rate = session.left.split("|")[0]
+//                val fundingRate = (session.left.toDouble() / session.waves.toDouble() * 100).toInt()
+//                binding.textLeftSeat.text = session.left.toString()
+                binding.textLeftCove.visibility = GONE
+                binding.textLeftSeat.visibility = GONE
+                binding.textRightCove.text = "잔여"
+                binding.textRightSeat.text = session.right.toString()
+                cardView?.strokeColor = ContextCompat.getColor(context, R.color.session_blue)
+            }else {
                 binding.textLeftCove.text = "좌"
                 binding.textLeftSeat.text = session.left.toString()
                 binding.textRightCove.text = "우"

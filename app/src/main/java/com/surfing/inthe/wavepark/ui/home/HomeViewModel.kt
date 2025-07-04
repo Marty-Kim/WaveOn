@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -40,7 +41,9 @@ class HomeViewModel @Inject constructor(
             eventRepository.syncEventsIfNeeded()
             // 2. Room Flow collect (초기화 시 1회만)
             launch {
-                eventRepository.getEventsFlow().collect { events ->
+                eventRepository.getEventsFlow()
+                    .take(1) // 또는 .first()
+                    .collect { events ->
                     _events.emit(events)
                 }
             }

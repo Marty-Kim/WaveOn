@@ -76,6 +76,7 @@ class DashboardFragment : Fragment() {
     private fun observeViewModel() {
         dashboardViewModel.selectedSessionPairs.observe(viewLifecycleOwner) { pairs ->
             dailySessionAdapter.submitList(pairs)
+            binding.recyclerViewReservations.scrollToPosition(0)
             if (pairs.isNullOrEmpty()) {
                 binding.recyclerViewReservations.visibility = View.GONE
                 emptySessionLayout.visibility = View.VISIBLE

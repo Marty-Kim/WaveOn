@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter
 data class DailySession(
     val isfunding: Boolean = false,
     val islesson: Boolean = false,
-    val left: Int = 0,
+    val left: String = "",
     val name: String = "",
     val right: Int = 0,
     val time: String = "",
@@ -54,7 +54,7 @@ class DashboardRepositoryImpl @Inject constructor(
                             DailySession(
                                 isfunding = it["isfunding"] as? Boolean ?: false,
                                 islesson = it["islesson"] as? Boolean ?: false,
-                                left = (it["left"] as? Long)?.toInt() ?: 0,
+                                left = it["left"]as? String ?: "0",
                                 name = it["name"] as? String ?: "",
                                 right = (it["right"] as? Long)?.toInt() ?: 0,
                                 time = it["time"] as? String ?: "",

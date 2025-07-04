@@ -289,7 +289,9 @@ class WebViewFragment : Fragment() {
                         prefs.edit().putInt(KEY_IS_LOGGED_IN, 1).apply()
                     }
                 }
-                
+                if (url == "https://wavepark.co.kr/login" && isLoggedIn){
+                    performBackgroundLogin()
+                }
                 // 결제 등 외부 앱 호출 처리
                 if (url.startsWith("intent:") || url.startsWith("market:")) {
                     try {
@@ -327,6 +329,8 @@ class WebViewFragment : Fragment() {
                         crawlMyPageReservationsAsync(3)
                     }, 1000)
                 }
+
+
 
                 
                 // 로딩 완료 시 프로그레스바 숨김 (선택사항)
@@ -412,7 +416,7 @@ class WebViewFragment : Fragment() {
             val statusScript = """
                 (function() {
                     // 현재 페이지에서 로그인 상태 확인
-                    var isLoggedIn = document.querySelector('.user-menu, .profile-menu, .logout-btn') !== null;
+                    var isLoggedIn = document.querySelector('.login-layer-pop') !== null;
                     return isLoggedIn;
                 })();
             """.trimIndent()
