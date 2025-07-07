@@ -1,6 +1,8 @@
 [versions]
-agp = "8.9.1"
+agp = "8.5.0"
 kotlin = "2.0.21"
+compose = "1.6.10"
+compose-compiler = "2.0.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -30,6 +32,9 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "compose-compiler" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 

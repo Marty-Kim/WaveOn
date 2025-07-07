@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev")}
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -15,6 +16,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev")}
         google()
         mavenCentral()
     }
@@ -22,4 +24,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "WavePark"
 include(":app")
+include(":shared")
+include(":web")
+include(":iosApp")
  
