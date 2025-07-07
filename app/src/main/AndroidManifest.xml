@@ -36,6 +36,10 @@
         </activity>
         <activity android:name=".ui.notifications.ReservationListActivity"
             android:exported="false"/>
+        <activity
+            android:name=".ui.crash.CrashReportActivity"
+            android:exported="false"
+            android:theme="@style/Theme.WavePark" />
 
         <service
             android:name=".MyFirebaseMessagingService"
