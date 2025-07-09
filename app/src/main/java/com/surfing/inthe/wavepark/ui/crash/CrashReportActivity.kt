@@ -173,7 +173,7 @@ fun CrashReportScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("크래시 데이터를 불러오는데 실패했습니다: ${uiState.message}")
+                    Text("크래시 데이터를 불러오는데 실패했습니다: ${uiState}")
                 }
             }
         }

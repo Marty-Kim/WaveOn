@@ -641,7 +641,7 @@ class WebViewFragment : Fragment() {
                                 .header("Sec-Fetch-User", "?1")
                                 .header("Sec-Fetch-Site", "same-origin")
                                 .header("Sec-Fetch-Dest", "document")
-                                .timeout(30000)
+                                .timeout(50000)
                                 .followRedirects(true)
                             val document = connection.get()
                             val table = document.select("table.basic").firstOrNull()
@@ -681,6 +681,7 @@ class WebViewFragment : Fragment() {
                             Log.d(TAG, "[예약크롤] page=$page 크롤링 완료, 수집: ${reservations.size}")
                             // 각 페이지마다 emit
                             if (reservations.isNotEmpty()) {
+                                reservations.forEach { Log.d("[예약정보]" ,"status ${it.status}") }
                                 Log.d(TAG, "[예약크롤] page=$page addReservations 호출")
                                 reservationViewModel.addReservations(reservations)
                                 reservationViewModel.setLoading(false)

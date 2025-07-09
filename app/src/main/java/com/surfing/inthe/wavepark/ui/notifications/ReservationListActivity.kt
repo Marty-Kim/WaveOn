@@ -1,7 +1,13 @@
 package com.surfing.inthe.wavepark.ui.notifications
 
+import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -16,11 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.surfing.inthe.wavepark.data.model.Reservation
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import com.surfing.inthe.wavepark.util.ApiConfig
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -35,15 +47,31 @@ class ReservationListActivity : ComponentActivity() {
     }
 }
 
+
+fun isAfterToday(dateMillis: Date): Boolean {
+    // millis를 LocalDate로 변환 (시스템 타임존 기준)
+    val inputDate = Instant.ofEpochMilli(dateMillis.time)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+    // 오늘 날짜 구하기
+    val today = LocalDate.now()
+    // 오늘 이후면 true
+    return inputDate.isBefore(today)
+}
 @Composable
 fun ReservationListScreen(viewModel: ReservationViewModel) {
-    val allReservations by viewModel.reservations.collectAsState()
-    val loading by viewModel.loading.collectAsState()
+    val allReservations by viewModel.reservations.collectAsStateWithLifecycle()
+    val loading by viewModel.loading.collectAsStateWithLifecycle()
+
+
+    Log.d("예약 뷰" , "size : ${    allReservations.size} ")
 
     // 필터: 오늘 이후 + 확인된 예약
-    val today = remember { java.util.Date() }
+    val today = remember { Date().apply { hours = 0 }}
     val filtered = allReservations
-        .filter { it.sessionDate >= today && it.status == "confirmed" }
+        .filter {
+            Log.d("예약 뷰" , "it.status : ${    it.status} date : ${it.sessionDate}")
+            !(isAfterToday(it.sessionDate)) && (it.status == "confirmed" || it.status == "pending") }
         .sortedBy { it.sessionDate }
 
     Scaffold(
@@ -62,7 +90,8 @@ fun ReservationListScreen(viewModel: ReservationViewModel) {
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         text = "예약 정보를 가져오는 중입니다.")
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = 20.dp)
                     )
                 }
@@ -138,10 +167,10 @@ fun ReservationItem(reservation: Reservation) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text("세션 타입: ${reservation.sessionType}")
-                Text("세션 시간: ${reservation.sessionTime}")
+//                Text("세션 시간: ${reservation.sessionTime}")
                 Text("이용일자: ${dateFormatter.format(reservation.sessionDate)}")
-                Text("잔여 좌석: ${reservation.remainingSeats}/${reservation.totalSeats}")
-                Text("가격: ${reservation.price}원")
+//                Text("잔여 좌석: ${reservation.remainingSeats}/${reservation.totalSeats}")
+//                Text("가격: ${reservation.price}원")
                 Text("상태: ${reservation.status}")
             }
             Button(
@@ -151,7 +180,16 @@ fun ReservationItem(reservation: Reservation) {
             }
         }
         if (showQr) {
-            QrDialog(qrContent = reservation.reservationNumber, onDismiss = { showQr = false })
+            if (reservation.reservationNumber.contains("re=ini")){
+                val toast = Toast(LocalContext.current)
+                toast.setText("지원되지 않는 티켓입니다")
+                toast.show()
+                val url = "${ApiConfig.WAVEPARK_BASE_URL}/mypage/orderview/${reservation.reservationNumber}"
+                val inte = Intent(ACTION_VIEW,Uri.parse(url))
+                LocalContext.current.startActivity(inte)
+            }else{
+                QrDialog(qrContent = reservation.reservationNumber, onDismiss = { showQr = false })
+            }
         }
     }
 } 

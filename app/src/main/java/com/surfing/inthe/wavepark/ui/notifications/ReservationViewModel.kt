@@ -1,5 +1,6 @@
 package com.surfing.inthe.wavepark.ui.notifications
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +27,9 @@ class ReservationViewModel @Inject constructor(
 
     private fun loadReservations() {
         viewModelScope.launch {
-            repository.getUpcomingReservations().collect { reservationList ->
-                _reservations.value = reservationList
+            repository.getAllReservations().collect { reservationList ->
+                Log.d("LOAD REPOS" , "[예약 데이터] ${reservationList.size}")
+                _reservations.emit(reservationList)
             }
         }
     }
