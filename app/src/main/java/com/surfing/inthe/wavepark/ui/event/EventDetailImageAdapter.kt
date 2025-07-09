@@ -1,39 +1,24 @@
 package com.surfing.inthe.wavepark.ui.event
 
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.surfing.inthe.wavepark.R
-import com.surfing.inthe.wavepark.ui.home.EventItem
+import com.surfing.inthe.wavepark.databinding.ItemEventImageBinding
 
-class EventDetailImageAdapter(private val imageUrls: EventItem) : RecyclerView.Adapter<EventDetailImageAdapter.ImageViewHolder>() {
-    class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView = itemView.findViewById(R.id.rootImageview)
-    }
-
+class EventDetailImageAdapter(private val imageUrls: List<String>) : RecyclerView.Adapter<EventDetailImageAdapter.ImageViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_image, parent, false)
-        return ImageViewHolder(view)
+        val binding = ItemEventImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ImageViewHolder(binding)
     }
-
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val item = imageUrls
-        Glide.with(holder.imageView.context)
-            .load(item.imageList[position])
-            .into(holder.imageView)
+        holder.bind(imageUrls[position])
+    }
+    override fun getItemCount(): Int = imageUrls.size
 
-        holder.imageView.setOnClickListener {
-            if(position == item.imageList.size - 1){
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.event_url))
-                holder.imageView.context.startActivity(intent)
-            }
+    class ImageViewHolder(private val binding: ItemEventImageBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(imageUrl: String) {
+            Glide.with(binding.rootImageview).load(imageUrl).into(binding.rootImageview)
         }
     }
-
-    override fun getItemCount(): Int = imageUrls.imageList.size
 } 

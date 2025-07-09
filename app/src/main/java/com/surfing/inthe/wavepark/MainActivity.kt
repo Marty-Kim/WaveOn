@@ -17,10 +17,14 @@ import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import com.surfing.inthe.wavepark.ui.dashboard.DashboardFragment
 import com.surfing.inthe.wavepark.ui.home.HomeFragment
+import com.surfing.inthe.wavepark.ui.home.HomeViewModel
 import com.surfing.inthe.wavepark.ui.notifications.ReservationListActivity
 import com.surfing.inthe.wavepark.ui.notifications.WebViewFragment
+import com.surfing.inthe.wavepark.ui.crash.CrashReportActivity
+import kotlin.getValue
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -71,6 +75,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupFloatingActionButtons()
+    }
+
+    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_crash_report -> {
+                startActivity(Intent(this, CrashReportActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private var isFabExpanded = false

@@ -1,12 +1,14 @@
 package com.surfing.inthe.wavepark.data.model
 
-import java.time.LocalDate
+import java.util.Date
 
 data class Reservation(
-    val number: String,
-    val date: LocalDate,
-    val applyDate: LocalDate,
-    val product: String,
-    val count: String,
-    val status: String
+    val reservationNumber: String,
+    val sessionDate: Date,
+    val sessionTime: String,
+    val sessionType: String,
+    val remainingSeats: Int,
+    val totalSeats: Int,
+    val price: Int,
+    val status: String // "confirmed", "cancelled", "pending"
 ) 

@@ -6,19 +6,32 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.surfing.inthe.wavepark.R
+import com.surfing.inthe.wavepark.data.model.Event
+import com.surfing.inthe.wavepark.data.repository.EventRepository
 import com.surfing.inthe.wavepark.databinding.ActivityEventListBinding
 import com.surfing.inthe.wavepark.ui.home.EventAdapter
+import com.surfing.inthe.wavepark.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EventListActivity : AppCompatActivity() {
-    // Hilt로 ViewModel 주입 (by viewModels())
-    private val homeViewModel: EventViewModel by viewModels()
     private lateinit var eventAdapter: EventAdapter
     private var _binding: ActivityEventListBinding? = null
     private val binding get() = _binding!!
+    private val eventListViewModel: EventListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,33 +53,34 @@ class EventListActivity : AppCompatActivity() {
             layoutManager = GridLayoutManager(context, 2)
             adapter = eventAdapter
         }
-
     }
-    // ViewModel의 LiveData를 관찰하여 UI 업데이트
     private fun observeViewModel() {
-        homeViewModel.events.observe(this) { events ->
-            events.forEach {
-                println("events ${it.title}" )
+        lifecycleScope.launch {
+            eventListViewModel.event.collect { events ->
+                eventAdapter.submitList(events)
             }
-            
-            // 필터링된 이벤트만 표시
-            val filteredEvents = events.filter { event ->
-                event.title.contains("서핑") ||
-                event.title.contains("surfing", ignoreCase = true) ||
-                event.title.contains("night", ignoreCase = true) ||
-                event.title.contains("surf pass", ignoreCase = true) ||
-                event.title.contains("펀딩") ||
-                event.title.contains("레슨")
-            }
-            
-            println("Filtered events count: ${filteredEvents.size}")
-            eventAdapter.submitList(filteredEvents)
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+}
+
+
+@HiltViewModel
+class EventListViewModel @Inject constructor(
+    private val eventRepository: EventRepository
+) : ViewModel() {
+    private val _event = MutableStateFlow<List<Event>>(emptyList())
+    val event: StateFlow<List<Event>> = _event.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            eventRepository.getEventsFlow().collect { events ->
+                _event.value = events
+            }
+        }
     }
 
 

@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 import javax.inject.Singleton
 import javax.inject.Named
 
@@ -52,9 +53,22 @@ object NetworkModule {
     @Singleton
     @Named("temperature")
     fun provideWaterTemperatureRetrofit(): Retrofit {
+
+        var gson= GsonBuilder().setLenient().create()
+        var loggingInterceptor = HttpLoggingInterceptor().apply {
+            // DEBUG 모드에서만 로깅 활성화
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+        }
+        var okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor).build()
         return Retrofit.Builder()
             .baseUrl(ApiConfig.TEMPERATURE_API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
     
@@ -63,7 +77,8 @@ object NetworkModule {
     fun provideWaterTemperatureApiService(@Named("temperature") retrofit: Retrofit): WaterTemperatureApiService {
         return retrofit.create(WaterTemperatureApiService::class.java)
     }
-    
+
+
     @Provides
     @Singleton
     @Named("weather_api_key")

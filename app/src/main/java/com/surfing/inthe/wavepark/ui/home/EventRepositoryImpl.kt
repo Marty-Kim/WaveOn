@@ -1,66 +1,87 @@
-package com.surfing.inthe.wavepark.ui.home
+package com.surfing.inthe.wavepark.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.surfing.inthe.wavepark.data.database.dao.EventDao
+import com.surfing.inthe.wavepark.data.model.Event
+import com.surfing.inthe.wavepark.data.model.EventMapper.toEvent
+import com.surfing.inthe.wavepark.data.model.EventMapper.toEventEntityList
+import com.surfing.inthe.wavepark.data.model.EventMapper.toEventList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class EventRepositoryImpl @Inject constructor(
+    private val eventDao: EventDao,
     private val firestore: FirebaseFirestore
 ) : EventRepository {
+    override fun getEventsFlow(): Flow<List<Event>> =
+        eventDao.getAllActiveEvents().map { it.toEventList() }
 
-    var events: List<EventItem>? = null
-
-    override suspend fun getEventsFromFirestore(): List<EventItem> {
-        println("Event snapshot :")
-        if (!events.isNullOrEmpty()) {
-            return events!!
+    override suspend fun syncEventsIfNeeded() {
+        val eventCount = eventDao.getTotalEventCount()
+        val lastSyncTime = eventDao.getLastSyncTime()
+        val currentTime = Date()
+        if (eventCount == 0 || lastSyncTime == null || isDataStale(lastSyncTime, currentTime)) {
+            val events = fetchEventsFromFirestore()
+            eventDao.insertEvents(events.toEventEntityList())
         }
-        return try {
-            val snapshot = firestore.collection("events")
-                .get()
-                .await()
-            println("Event snapshot : ${snapshot.size()}")
+    }
 
-            events = snapshot.documents.mapNotNull { doc ->
+    private suspend fun fetchEventsFromFirestore(): List<Event> = withContext(Dispatchers.IO) {
+        try {
+            val snapshot = firestore.collection("events").get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val eventId = doc.getString("event_id") ?: return@mapNotNull null
                 val title = doc.getString("title") ?: return@mapNotNull null
-                val event_url = doc.getString("event_url")
-                val crawled_at = doc.getString("crawled_at")
-                val d_day = (doc.get("d_day") as? Long)?.toInt() ?: 0
-                val event_id = doc.getString("event_id")
-                val event_type = doc.getString("event_type")
-                val date = doc.getString("date") ?: ""
-                val imageUrl = doc.getString("image_url")
-                println("Event docs : ${title}")
-                println("Event docs : ${imageUrl}")
-                EventItem(
-                    imageUrl = imageUrl,
+                Event(
+                    eventId = eventId,
                     title = title,
-                    event_url = event_url,
-                    crawled_at = crawled_at,
-                    d_day = d_day,
-                    event_id = event_id,
-                    event_type = event_type,
-                    date = date
+                    description = doc.getString("description") ?: "",
+                    imageUrl = doc.getString("image_url"),
+                    startDate = Date(),
+                    endDate = null,
+                    location = doc.getString("location"),
+                    isActive = true,
+                    eventUrl = doc.getString("event_url"),
+                    eventType = doc.getString("event_type"),
+                    dDay = (doc.get("d_day") as? Long)?.toInt(),
+                    imageList = emptyList(),
+                    lastSyncAt = Date()
                 )
             }
-            // TODO: 여기서 jsoup파싱으로 이벤트 상세의 이미지를 imageList에 담고 싶다
-
-
-            events?: emptyList()
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
         }
     }
 
-    override suspend fun getEventImagesFromWeb(idx: String): List<String> = withContext(Dispatchers.IO) {
+    override suspend fun fetchAndSaveEventImagesIfNeeded() {
+        val events = eventDao.getAllEvents().map { it.toEventList() }
+        events.collect { eventList ->
+            eventList.filter { it.imageList.isEmpty() && it.eventId.isNotEmpty() }.forEach { event ->
+                val images = fetchImagesByJsoup(event.eventId)
+                if (images.isNotEmpty()) {
+                    val entity = eventDao.getEventById(event.eventId)
+                    entity?.let {
+                        val updated = it.copy(imageList = images.joinToString(","), updatedAt = Date())
+                        eventDao.updateEvent(updated)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchImagesByJsoup(eventId: String): List<String> = withContext(Dispatchers.IO) {
         try {
-            val url = "https://www.wavepark.co.kr/board/event?act=view/detail/$idx"
+            val url = "https://www.wavepark.co.kr/board/event?act=view/detail/$eventId"
             val doc = Jsoup.connect(url)
                 .userAgent("Mozilla/5.0")
                 .get()
@@ -69,41 +90,18 @@ class EventRepositoryImpl @Inject constructor(
                 val src = img.attr("src")
                 if (src.startsWith("http")) src else "https://www.wavepark.co.kr/$src"
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
         }
     }
 
-    override suspend fun getEventsFromFirestoreWithImages(setEvents: (List<EventItem>) -> Unit): List<EventItem> {
-        val snapshot = firestore.collection("events").get().await()
-        val eventList = snapshot.documents.mapNotNull { doc ->
-            val eventId = doc.getString("event_id") ?: return@mapNotNull null
-            EventItem(
-                imageUrl = doc.getString("image_url"),
-                title = doc.getString("title") ?: "",
-                event_url = doc.getString("event_url"),
-                crawled_at = doc.getString("crawled_at"),
-                d_day = (doc.get("d_day") as? Long)?.toInt() ?: 0,
-                event_id = eventId,
-                event_type = doc.getString("event_type"),
-                date = doc.getString("date") ?: "",
-                imageList = emptyList()
-            )
-        }
-        // 먼저 기본 리스트를 콜백으로 전달
-        setEvents(eventList)
-        // 각 이벤트별로 jsoup 파싱을 비동기로 실행
-        eventList.forEachIndexed { idx, event ->
-            GlobalScope.launch(Dispatchers.IO) {
-                val images = getEventImagesFromWeb(event.event_id ?: "")
-                val updated = event.copy(imageList = images)
-                // 리스트에서 해당 이벤트만 교체
-                val newList = eventList.toMutableList().apply { set(idx, updated) }
-                setEvents(newList)
-            }
-        }
-        return eventList
+    override suspend fun getEventById(eventId: String): Event? =
+        eventDao.getEventById(eventId)?.toEvent()
+
+    private fun isDataStale(lastSyncTime: Date, currentTime: Date): Boolean {
+        val diffInMillis = currentTime.time - lastSyncTime.time
+        val diffInHours = TimeUnit.MILLISECONDS.toHours(diffInMillis)
+        return diffInHours >= 6
     }
 } 

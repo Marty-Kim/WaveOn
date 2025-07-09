@@ -88,12 +88,9 @@ class DashboardViewModel @Inject constructor(
             )
         }
         _selectedSessionPairs.value = merged
+
     }
 
-    fun refreshData() {
-        _selectedDate.value?.let { date ->
-            // 구버전 예약 관련 LiveData 및 함수 완전 제거
-        }
-    }
+
 
 }

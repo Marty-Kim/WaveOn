@@ -2,10 +2,14 @@ package com.surfing.inthe.wavepark.data.repository
 
 import com.surfing.inthe.wavepark.BuildConfig
 import com.surfing.inthe.wavepark.data.api.WeatherApiService
+import com.surfing.inthe.wavepark.data.database.dao.WeatherDataDao
+import com.surfing.inthe.wavepark.data.database.entity.WeatherDataEntity
 import com.surfing.inthe.wavepark.data.model.WeatherData
 import com.surfing.inthe.wavepark.data.model.WeatherResult
 import com.surfing.inthe.wavepark.util.ApiConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
@@ -15,8 +19,21 @@ import javax.inject.Singleton
 @Singleton
 class WeatherRepository @Inject constructor(
     private val weatherApiService: WeatherApiService,
+    private val weatherDataDao: WeatherDataDao
 ) {
-    private val apiKey: String  = ApiConfig.OPENWEATHER_API_KEY
+    private val apiKey: String = ApiConfig.OPENWEATHER_API_KEY
+
+    // RoomDB에서 최신 날씨 데이터 가져오기
+    suspend fun getLatestWeatherData(): WeatherData? {
+        return weatherDataDao.getLatestWeatherData()?.toDomainModel()
+    }
+
+    // RoomDB에서 날씨 데이터 Flow 가져오기
+    fun getWeatherDataFromDate(startDate: Date): Flow<List<WeatherData>> {
+        return weatherDataDao.getWeatherDataFromDate(startDate).map { entities ->
+            entities.map { it.toDomainModel() }
+        }
+    }
 
     suspend fun fetchWeatherData(): WeatherResult = withContext(Dispatchers.IO) {
         try {
@@ -47,28 +64,28 @@ class WeatherRepository @Inject constructor(
             }?.fcstValue
 
             val weatherStatus = parseWeatherStatus(sky, pty)
-            WeatherResult.Success(
-                WeatherData(
-                    weatherStatus = weatherStatus,
-                    temper = temp.toString(),
-                    baseDate = baseDate,
-                    baseTime = baseTime,
-                    fcstTime = targetFcstTime
-                )
+            val weatherData = WeatherData(
+                weatherStatus = weatherStatus,
+                temper = temp.toString(),
+                baseDate = baseDate,
+                baseTime = baseTime,
+                fcstTime = targetFcstTime
             )
-//            WeatherResult.Success(
-//                    WeatherData(
-//                        weatherStatus = "weatherStatus",
-//                        temper = "temper",
-//                        baseDate = "baseDate",
-//                        baseTime = "baseTime",
-//                        fcstTime = "targetFcstTime"
-//                    )
-//                    )
+
+            // RoomDB에 날씨 데이터 저장
+            saveWeatherData(weatherData)
+
+            WeatherResult.Success(weatherData)
             
         } catch (e: Exception) {
             WeatherResult.Error("API 호출 실패: ${e.message}")
         }
+    }
+
+    // RoomDB에 날씨 데이터 저장
+    private suspend fun saveWeatherData(weatherData: WeatherData) {
+        val entity = weatherData.toEntity()
+        weatherDataDao.insertWeatherData(entity)
     }
     
     private fun getBaseDate(now: Calendar): String {
@@ -119,5 +136,29 @@ class WeatherRepository @Inject constructor(
             "4" -> "흐림"
             else -> "알수없음"
         }
+    }
+
+    // Entity를 도메인 모델로 변환하는 확장 함수
+    private fun WeatherDataEntity.toDomainModel(): WeatherData {
+        return WeatherData(
+            weatherStatus = weatherCondition,
+            temper = temperature.toString(),
+            baseDate = "", // API에서 가져오는 값이므로 빈 문자열
+            baseTime = "", // API에서 가져오는 값이므로 빈 문자열
+            fcstTime = "" // API에서 가져오는 값이므로 빈 문자열
+        )
+    }
+
+    // 도메인 모델을 Entity로 변환하는 확장 함수
+    private fun WeatherData.toEntity(): WeatherDataEntity {
+        return WeatherDataEntity(
+            date = Date(),
+            temperature = temper.toDoubleOrNull() ?: 0.0,
+            humidity = 0, // API에서 제공하지 않는 값
+            windSpeed = 0.0, // API에서 제공하지 않는 값
+            windDirection = "", // API에서 제공하지 않는 값
+            weatherCondition = weatherStatus,
+            icon = "" // API에서 제공하지 않는 값
+        )
     }
 } 
