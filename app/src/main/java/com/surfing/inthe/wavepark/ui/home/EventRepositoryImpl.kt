@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.surfing.inthe.wavepark.data.database.dao.EventDao
 import com.surfing.inthe.wavepark.data.model.Event
 import com.surfing.inthe.wavepark.data.model.EventMapper.toEvent
+import com.surfing.inthe.wavepark.data.model.EventMapper.toEventEntity
 import com.surfing.inthe.wavepark.data.model.EventMapper.toEventEntityList
 import com.surfing.inthe.wavepark.data.model.EventMapper.toEventList
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,16 @@ class EventRepositoryImpl @Inject constructor(
         val currentTime = Date()
         if (eventCount == 0 || lastSyncTime == null || isDataStale(lastSyncTime, currentTime)) {
             val events = fetchEventsFromFirestore()
-            eventDao.insertEvents(events.toEventEntityList())
+            if (eventCount == 0){
+                eventDao.insertEvents(events.toEventEntityList())
+            }else{
+                events.forEach {
+                    if (eventDao.getEventById(it.eventId) == null){
+                        eventDao.insertEvent(it.toEventEntity())
+                    }
+                }
+            }
+
         }
     }
 

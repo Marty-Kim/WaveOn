@@ -1,6 +1,7 @@
 package com.surfing.inthe.wavepark.ui.home
 
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.surfing.inthe.wavepark.databinding.ItemEventBinding
 import com.surfing.inthe.wavepark.data.model.Event
 import com.surfing.inthe.wavepark.ui.event.EventDetailActivity
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 class EventAdapter : ListAdapter<Event, EventAdapter.EventViewHolder>(EventDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
@@ -33,13 +35,15 @@ class EventAdapter : ListAdapter<Event, EventAdapter.EventViewHolder>(EventDiffC
             binding.root.setOnClickListener {
                 Log.d("EventAdapter", "Loading imageList: ${item.imageList}")
                 item.eventUrl?.let {
-                    val intent = Intent(binding.root.context, EventDetailActivity::class.java)
-                    intent.putExtra("title", item.title)
-                    intent.putExtra("date", item.startDate.toString())
-                    intent.putExtra("idx", item.eventId)
-                    intent.putExtra("webUrl", item.eventUrl)
-                    intent.putStringArrayListExtra("images", ArrayList(item.imageList))
-                    binding.root.context.startActivity(intent)
+                    binding.root.context.startActivity(Intent(ACTION_VIEW,
+                        "https://www.wavepark.co.kr/board/event?act=view/detail/${item.eventId}".toUri()))
+//                    val intent = Intent(binding.root.context, EventDetailActivity::class.java)
+//                    intent.putExtra("title", item.title)
+//                    intent.putExtra("date", item.startDate.toString())
+//                    intent.putExtra("idx", item.eventId)
+//                    intent.putExtra("webUrl", item.eventUrl)
+//                    intent.putStringArrayListExtra("images", ArrayList(item.imageList))
+//                    binding.root.context.startActivity(intent)
                 }
             }
         }
