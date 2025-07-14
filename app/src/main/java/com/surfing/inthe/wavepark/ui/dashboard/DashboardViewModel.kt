@@ -69,7 +69,7 @@ class DashboardViewModel @Inject constructor(
             _errorMessage.value = ""
             try {
                 val sessions = withContext(Dispatchers.IO) {
-                    dashboardRepository.getFutureDailySessions(limitDays = 14)
+                    dashboardRepository.getFutureDailySessions(limitDays = 21)
                 }
                 _allSessions.value = sessions
                 _lastRefreshTime.value = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())

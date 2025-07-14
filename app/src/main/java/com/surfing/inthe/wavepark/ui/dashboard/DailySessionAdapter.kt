@@ -77,7 +77,7 @@ class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>
             val startTime = session.time.takeLast(8).substring(0, 5)
             val endTime = try {
                 val hour = startTime.substring(0, 2).toInt()
-                val nextHour = (hour + (if (session.isfunding) 2 else 1)) % 24
+                val nextHour = (hour + (if (session.isfunding || session.isNight) 2 else 1)) % 24
                 String.format("%02d:%s", nextHour, startTime.substring(3, 5))
             } catch (e: Exception) {
                 "--:--"

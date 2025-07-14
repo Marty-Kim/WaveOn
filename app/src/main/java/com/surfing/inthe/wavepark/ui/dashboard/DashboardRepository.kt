@@ -26,7 +26,7 @@ data class DailySession(
 
 interface DashboardRepository {
    
-    suspend fun getFutureDailySessions(limitDays: Int = 14): Map<String, List<DailySession>>
+    suspend fun getFutureDailySessions(limitDays: Int = 21): Map<String, List<DailySession>>
 }
 
 /**
@@ -54,6 +54,7 @@ class DashboardRepositoryImpl @Inject constructor(
                         val sessionList = sessions?.map {
                             DailySession(
                                 isfunding = it["isfunding"] as? Boolean ?: false,
+                                isNight = it["isNight"] as? Boolean ?: false,
                                 islesson = it["islesson"] as? Boolean ?: false,
                                 left = it["left"]as? String ?: "0",
                                 name = it["name"] as? String ?: "",
