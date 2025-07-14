@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter
 data class DailySession(
     val isfunding: Boolean = false,
     val islesson: Boolean = false,
+    val isNight: Boolean = false,
     val left: String = "",
     val name: String = "",
     val right: Int = 0,

@@ -103,8 +103,7 @@ class WebViewFragment : Fragment() {
         setupFloatingActionButtons()
         
         // 백그라운드 자동 로그인 후 페이지 로드
-        performBackgroundLogin()
-        
+
         return root
     }
 
@@ -115,7 +114,11 @@ class WebViewFragment : Fragment() {
             startActivity(intent)
         }
     }
-    
+
+    override fun onResume() {
+        super.onResume()
+        performBackgroundLogin()
+    }
 
     
 

@@ -50,10 +50,20 @@ class DashboardViewModel @Inject constructor(
     val selectedSessionPairs: LiveData<List<DailySessionPair>> = _selectedSessionPairs
 
     init {
-        refreshSessions()
+
     }
 
-    fun refreshSessions() {
+    fun initSessions(){
+
+        if (selectedDate.value != null){
+            refreshSessions(date = selectedDate.value!!)
+        }else{
+            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            refreshSessions(date = today)
+        }
+
+    }
+    fun refreshSessions(date : String) {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = ""
@@ -64,8 +74,7 @@ class DashboardViewModel @Inject constructor(
                 _allSessions.value = sessions
                 _lastRefreshTime.value = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
                 // 기본 선택 날짜(오늘)
-                val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-                setSelectedDate(today)
+                setSelectedDate(date)
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "알 수 없는 오류가 발생했습니다"
             } finally {

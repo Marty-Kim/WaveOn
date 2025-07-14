@@ -92,7 +92,7 @@ class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>
                 binding.textRightCove.text = "우"
                 binding.textRightSeat.text = "-"
                 cardView?.strokeColor = ContextCompat.getColor(context, R.color.session_blue)
-            } else if (session.isfunding){
+            } else if (session.isfunding || session.isNight){
 //                binding.textLeftCove.text = "펀딩률"
 //                val rate = session.left.split("|")[0]
 //                val fundingRate = (session.left.toDouble() / session.waves.toDouble() * 100).toInt()
@@ -101,21 +101,21 @@ class DailySessionAdapter : RecyclerView.Adapter<DailySessionAdapter.ViewHolder>
                 binding.textLeftSeat.visibility = GONE
                 binding.textRightCove.text = "잔여"
                 binding.textRightSeat.text = session.right.toString()
-                cardView?.strokeColor = ContextCompat.getColor(context, R.color.session_blue)
             }else {
                 binding.textLeftCove.text = "좌"
                 binding.textLeftSeat.text = session.left.toString()
                 binding.textRightCove.text = "우"
                 binding.textRightSeat.text = session.right.toString()
-                val strokeColor = when (session.name) {
-                    "초급" -> ContextCompat.getColor(context, R.color.session_blue)
-                    "중급" -> ContextCompat.getColor(context, R.color.session_yellow)
-                    "상급" -> ContextCompat.getColor(context, R.color.session_red)
-                    else -> ContextCompat.getColor(context, R.color.gray_light)
-                }
-                cardView?.setCardBackgroundColor(strokeColor)
-                cardView?.strokeColor = strokeColor
+
             }
+            val strokeColor = when (session.name) {
+                "초급" -> ContextCompat.getColor(context, R.color.session_blue)
+                "중급" -> ContextCompat.getColor(context, R.color.session_yellow)
+                "상급" -> ContextCompat.getColor(context, R.color.session_red)
+                else -> ContextCompat.getColor(context, R.color.session_blue)
+            }
+            cardView?.setCardBackgroundColor(strokeColor)
+            cardView?.strokeColor = strokeColor
             cardView?.setCardBackgroundColor(ContextCompat.getColor(context, R.color.background_surface))
             cardView?.strokeWidth = 4
         }

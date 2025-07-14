@@ -47,6 +47,11 @@ class DashboardFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        dashboardViewModel.initSessions()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         emptySessionLayout = binding.layoutEmptySession
@@ -62,7 +67,7 @@ class DashboardFragment : Fragment() {
             showDatePicker()
         }
         binding.btnRefresh.setOnClickListener {
-            dashboardViewModel.refreshSessions()
+            dashboardViewModel.refreshSessions(date = dashboardViewModel.selectedDate.value?: "")
         }
         // 세션 리스트
         dailySessionAdapter = DailySessionAdapter()
