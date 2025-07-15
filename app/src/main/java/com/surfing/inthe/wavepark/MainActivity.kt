@@ -119,6 +119,8 @@ class MainActivity : AppCompatActivity() {
         fabCarpool.setOnClickListener {
             // 카풀 리스트 화면으로 이동 (add/hide/show 방식으로 통일)
             Toast.makeText(this, "카풀 준비중", Toast.LENGTH_SHORT).show()
+//            startActivity(Intent(this, CrashReportActivity::class.java))
+
 //            val carpoolFragment = fragments[R.id.navigation_dashboard]!! // 예시: DashboardFragment로 이동
 //            if (activeFragment != carpoolFragment) {
 //                fragmentManager.beginTransaction()
