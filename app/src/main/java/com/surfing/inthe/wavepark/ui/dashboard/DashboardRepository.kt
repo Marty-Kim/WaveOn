@@ -1,5 +1,6 @@
 package com.surfing.inthe.wavepark.ui.dashboard
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -17,7 +18,7 @@ data class DailySession(
     val isfunding: Boolean = false,
     val islesson: Boolean = false,
     val isNight: Boolean = false,
-    val left: String = "",
+    val left: Int = 0,
     val name: String = "",
     val right: Int = 0,
     val time: String = "",
@@ -31,7 +32,7 @@ interface DashboardRepository {
 
 /**
  * 실제 데이터 제공 구현체. (API 연동)
- * @Inject 생성자: Hilt가 DI로 주입할 수 있게 함.
+ * @Inject 생성자: Hilt가 DI로 주입할 수 있게 함.-+
  */
 @Singleton
 class DashboardRepositoryImpl @Inject constructor(
@@ -52,11 +53,12 @@ class DashboardRepositoryImpl @Inject constructor(
                     if (docDate != null && !docDate.isBefore(now) && !docDate.isAfter(end)) {
                         val sessions = doc.get("sessions") as? List<Map<String, Any>>
                         val sessionList = sessions?.map {
+                            Log.d("LEFT LOG ","it  ${it["left"]}")
                             DailySession(
                                 isfunding = it["isfunding"] as? Boolean ?: false,
                                 isNight = it["isNight"] as? Boolean ?: false,
                                 islesson = it["islesson"] as? Boolean ?: false,
-                                left = it["left"]as? String ?: "0",
+                                left = (it["left"] as? Long)?.toInt() ?: 0,
                                 name = it["name"] as? String ?: "",
                                 right = (it["right"] as? Long)?.toInt() ?: 0,
                                 time = it["time"] as? String ?: "",

@@ -2,6 +2,8 @@ package com.surfing.inthe.wavepark.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +60,9 @@ class HomeFragment : Fragment() {
 
         binding.eventBtn.setOnClickListener {
             startActivity(Intent(context, EventListActivity::class.java))
+        }
+        binding.fundingCalendar.setOnClickListener {
+            startActivity(Intent(ACTION_VIEW, Uri.parse("https://waveparkcalendar.vercel.app/")))
         }
     }
 
